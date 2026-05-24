@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="赤シート学習">
+<title>消費税法理論マスター 赤シート学習</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "Hiragino Kaku Gothic ProN", "Yu Gothic", Meiryo, sans-serif;
+    margin: 0;
+    padding: 16px;
+    background: #f5f3ed;
+    color: #2a2a28;
+    line-height: 1.7;
+  }
+  .container { max-width: 650px; margin: 0 auto; }
+  h1 {
+    font-size: 20px;
+    font-weight: 500;
+    margin: 0 0 16px;
+    color: #1a1a18;
+  }
+  .tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: 1px solid #d8d3c4;
+    margin-bottom: 16px;
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 10px 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    font-size: 14px;
+    color: #6b6961;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .tab.active {
+    color: #1a1a18;
+    border-bottom-color: #e8443a;
+    font-weight: 500;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .toolbar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e5e1d4;
+  }
+  .toolbar label { font-size: 13px; color: #6b6961; }
+  select, button, input[type="text"], input[type="file"], textarea {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 6px 10px;
+    border: 1px solid #d8d3c4;
+    border-radius: 6px;
+    background: #fff;
+    color: #2a2a28;
+  }
+  button {
+    cursor: pointer;
+    background: #fff;
+    transition: background 0.15s;
+  }
+  button:hover { background: #f5f3ed; }
+  button:active { transform: scale(0.98); }
+  .btn-primary {
+    background: #e8443a;
+    color: #fff;
+    border-color: #e8443a;
+  }
+  .btn-primary:hover { background: #d63a30; }
+  .btn-danger {
+    background: #fff;
+    color: #c93c30;
+    border-color: #e8443a;
+  }
+  .btn-success {
+    background: #2e7d4f;
+    color: #fff;
+    border-color: #2e7d4f;
+  }
+  .btn-success:hover { background: #246240; }
+  .spacer { flex: 1; }
+
+  /* Paper display */
+  .paper {
+    background: #fdfbf5;
+    border: 1px solid #d8d3c4;
+    border-radius: 8px;
+    padding: 24px 28px;
+    line-height: 2;
+    font-size: 16px;
+    color: #2a2a28;
+    min-height: 320px;
+  }
+  .paper h3.theory-title {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0 0 12px;
+    color: #1a1a18;
+    border-bottom: 1px solid #d8d3c4;
+    padding-bottom: 8px;
+  }
+  .paper .indent-1 { padding-left: 14px; display: block; margin: 2px 0; }
+  .paper .indent-2 { padding-left: 28px; display: block; margin: 2px 0; }
+  .paper .indent-3 { padding-left: 42px; display: block; margin: 2px 0; }
+  .paper .indent-4 { padding-left: 56px; display: block; margin: 2px 0; }
+  .paper .heading-line {
+    background: #d8d3c4;
+    padding: 6px 10px;
+    font-weight: 500;
+    font-size: 17px;
+    margin: 10px 0 4px;
+    border-radius: 3px;
+    display: block;
+  }
+  .paper .bold-text {
+    font-weight: 700;
+  }
+  .paper div {
+    /* 番号付き行の折り返し対応 */
+    text-indent: 0;
+    padding-left: 0;
+  }
+  .paper div.has-number {
+    text-indent: -2em;
+    padding-left: 2em;
+  }
+  .paper div.indent-1.has-number {
+    text-indent: -2em;
+    padding-left: calc(14px + 2em);
+  }
+  .paper div.indent-2.has-number {
+    text-indent: -2em;
+    padding-left: calc(28px + 2em);
+  }
+  .paper div.indent-3.has-number {
+    text-indent: -2em;
+    padding-left: calc(42px + 2em);
+  }
+  .paper div.indent-4.has-number {
+    text-indent: -2em;
+    padding-left: calc(56px + 2em);
+  }
+
+  .page-footer {
+    margin-top: 24px;
+    padding-top: 12px;
+    border-top: 1px dashed #d8d3c4;
+    font-size: 12px;
+    color: #888780;
+    text-align: center;
+  }
+  .rank-badge {
+    display: inline-block;
+    background: #e8443a;
+    color: #fff;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    font-weight: 500;
+    vertical-align: 2px;
+  }
+  .rank-badge.b { background: #1e7fc4; }
+  .rank-badge.c { background: #888780; }
+
+  .mask {
+    background: #e8443a;
+    color: #e8443a;
+    padding: 0 3px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .mask.shown {
+    background: transparent;
+    color: #c2185b;
+    font-weight: 500;
+  }
+  .sentence-mask {
+    display: block;
+    background: #e8443a;
+    color: #e8443a;
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin: 6px 0;
+    cursor: pointer;
+    user-select: none;
+    line-height: 1.8;
+  }
+  .sentence-mask.shown {
+    background: #fff5f5;
+    color: #2a2a28;
+    border: 1px dashed #e8443a;
+  }
+  .sentence-hint {
+    display: block;
+    padding: 4px 8px;
+    background: #fff5f5;
+    border-radius: 4px;
+    margin: 6px 0;
+  }
+
+  /* Navigation */
+  .nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 16px;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .nav-group { display: flex; gap: 6px; align-items: center; }
+  .counter { font-size: 13px; color: #6b6961; padding: 0 8px; }
+  .page-counter { font-size: 12px; color: #888780; padding: 0 6px; }
+  .nav-divider { width: 1px; height: 20px; background: #d8d3c4; margin: 0 4px; }
+
+  /* Sync status indicator */
+  .sync-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #fff5e6;
+    border: 1px solid #f0c97a;
+    border-radius: 14px;
+    font-size: 12px;
+    color: #855a14;
+    margin-left: 8px;
+  }
+  .sync-status.synced {
+    background: #e8f4ec;
+    border-color: #8ec9a5;
+    color: #2e7d4f;
+  }
+  .sync-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* Editor */
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    color: #6b6961;
+    margin-bottom: 4px;
+  }
+  .field input[type="text"], .field select { width: 100%; }
+
+  .gui-toolbar {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    padding: 8px;
+    background: #fdfbf5;
+    border: 1px solid #d8d3c4;
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    align-items: center;
+  }
+  .gui-toolbar button {
+    font-size: 12px;
+    padding: 5px 10px;
+  }
+  .gui-toolbar .group-divider {
+    width: 1px;
+    height: 20px;
+    background: #d8d3c4;
+    margin: 0 2px;
+  }
+  .gui-toolbar .btn-mask-keyword {
+    background: #e8443a; color: #fff; border-color: #e8443a;
+  }
+  .gui-toolbar .btn-mask-keyword:hover { background: #d63a30; }
+  .gui-toolbar .btn-mask-sentence {
+    background: #c2185b; color: #fff; border-color: #c2185b;
+  }
+  .gui-toolbar .btn-mask-sentence:hover { background: #a01548; }
+  .gui-toolbar .btn-page-break {
+    background: #555; color: #fff; border-color: #555;
+  }
+  .gui-toolbar .btn-page-break:hover { background: #333; }
+  .gui-toolbar .btn-struct {
+    background: #fff; color: #2a2a28;
+    font-weight: 500;
+  }
+
+  .gui-editor {
+    width: 100%;
+    min-height: 320px;
+    padding: 14px 16px;
+    border: 1px solid #d8d3c4;
+    border-radius: 0 0 6px 6px;
+    background: #fff;
+    font-size: 15px;
+    line-height: 2;
+    outline: none;
+    word-wrap: break-word;
+  }
+  .gui-editor:focus { border-color: #e8443a; }
+
+  .gui-editor div.indent-1-block {
+    margin-left: 14px;
+    padding-left: 6px;
+    border-left: 2px solid #ece5d3;
+  }
+  .gui-editor div.indent-2-block {
+    margin-left: 28px;
+    padding-left: 6px;
+    border-left: 2px solid #ece5d3;
+  }
+  .gui-editor div.indent-3-block {
+    margin-left: 42px;
+    padding-left: 6px;
+    border-left: 2px solid #ece5d3;
+  }
+  .gui-editor div.indent-4-block {
+    margin-left: 56px;
+    padding-left: 6px;
+    border-left: 2px solid #ece5d3;
+  }
+  .gui-editor div.heading-block {
+    background: #d8d3c4;
+    padding: 6px 10px;
+    font-weight: 500;
+    font-size: 16px;
+    margin: 10px 0 4px;
+    border-radius: 3px;
+  }
+
+  .gui-editor .mark-kw {
+    background: #ffd6d2;
+    color: #c2185b;
+    padding: 1px 4px;
+    border-radius: 3px;
+    border-bottom: 2px solid #e8443a;
+  }
+  .gui-editor .mark-sent {
+    display: inline-block;
+    background: #fff0f3;
+    color: #8a1545;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px dashed #c2185b;
+    margin: 2px 0;
+  }
+  .gui-editor .mark-bold {
+    font-weight: 700;
+  }
+  .gui-editor .page-break {
+    display: block;
+    position: relative;
+    height: 28px;
+    margin: 12px 0;
+    background: linear-gradient(to right, transparent, #d8d3c4 20%, #d8d3c4 80%, transparent);
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: center;
+    text-align: center;
+    user-select: none;
+  }
+  .gui-editor .page-break::before {
+    content: "── 改ページ ──";
+    display: inline-block;
+    padding: 2px 10px;
+    background: #f5f3ed;
+    color: #6b6961;
+    font-size: 11px;
+    border: 1px solid #d8d3c4;
+    border-radius: 12px;
+    cursor: pointer;
+    line-height: 24px;
+  }
+
+  .mode-toggle {
+    display: inline-flex;
+    border: 1px solid #d8d3c4;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-left: 8px;
+  }
+  .mode-toggle button {
+    border: none;
+    border-radius: 0;
+    padding: 5px 10px;
+    font-size: 12px;
+    background: #fff;
+  }
+  .mode-toggle button.active {
+    background: #2a2a28;
+    color: #fff;
+  }
+
+  .help {
+    background: #e6f1fb;
+    color: #0c447c;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .help code {
+    background: rgba(0,0,0,0.08);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+  }
+  .help .tip {
+    background: rgba(255,255,255,0.5);
+    padding: 6px 10px;
+    border-radius: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+  .actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border: 1px solid #d8d3c4;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    background: #fff;
+  }
+  .list-item .title { flex: 1; font-size: 14px; }
+  .list-item button { padding: 4px 10px; font-size: 12px; }
+  .rank-pill {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: #f5f3ed;
+    color: #6b6961;
+    margin-left: 6px;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #888780;
+    font-size: 14px;
+  }
+
+  textarea#json-area {
+    width: 100%;
+    min-height: 200px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 13px;
+    resize: vertical;
+  }
+
+  .paper.flipping {
+    animation: flip 0.25s ease-out;
+  }
+  @keyframes flip {
+    0%   { opacity: 1; transform: translateX(0); }
+    50%  { opacity: 0; transform: translateX(20px); }
+    100% { opacity: 1; transform: translateX(0); }
+  }
+
+  /* iPad / mobile tweaks */
+  @media (max-width: 768px) {
+    body { padding: 10px; }
+    h1 { font-size: 18px; }
+    .paper { padding: 16px 18px; font-size: 15px; }
+    .gui-toolbar button { font-size: 11px; padding: 4px 8px; }
+  }
+
+  @media print {
+    .tabs, .toolbar, .nav, #panel-edit, #panel-data { display: none !important; }
+    body { background: #fff; }
+    .paper { border: none; page-break-after: always; }
+    .mask { background: transparent !important; color: transparent !important; border-bottom: 1px solid #ccc; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>消費税法理論マスター 赤シート学習 <span id="sync-status-display"></span></h1>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="study">学習</button>
+    <button class="tab" data-tab="edit">編集</button>
+    <button class="tab" data-tab="data">データ管理</button>
+  </div>
+
+  <!-- STUDY -->
+  <div class="panel active" id="panel-study">
+    <div class="toolbar">
+      <label>ランク</label>
+      <select id="filter-rank">
+        <option value="all">全て</option>
+        <option value="A" selected>A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+      </select>
+      <label style="margin-left:8px;">隠す対象</label>
+      <select id="mask-mode">
+        <option value="both" selected>両方</option>
+        <option value="keyword">キーワードのみ</option>
+        <option value="sentence">文単位のみ</option>
+        <option value="none">隠さない</option>
+      </select>
+      <span class="spacer"></span>
+      <button id="btn-show-all">全て表示</button>
+      <button id="btn-hide-all">全て隠す</button>
+      <button id="btn-shuffle">シャッフル</button>
+    </div>
+
+    <div class="paper" id="display">
+      <div class="empty">理論が登録されていません。<br>「編集」タブから追加するか、「データ管理」タブからファイルを読み込んでください。</div>
+    </div>
+
+    <div class="nav">
+      <div class="nav-group">
+        <button id="btn-prev-theory" title="前の理論へ">⏮ 前の理論</button>
+        <button id="btn-prev-page" title="前のページへ">← ページ</button>
+      </div>
+      <div class="nav-group">
+        <span class="counter" id="counter">0 / 0</span>
+        <span class="nav-divider"></span>
+        <span class="page-counter" id="page-counter">- / -</span>
+      </div>
+      <div class="nav-group">
+        <button id="btn-next-page" title="次のページへ">ページ →</button>
+        <button id="btn-next-theory" title="次の理論へ">次の理論 ⏭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EDIT -->
+  <div class="panel" id="panel-edit">
+    <div class="help">
+      <strong>編集機能</strong><br>
+      ■ <strong>マスク</strong>:選択 → 「キーワード」「文ごと」<br>
+      ■ <strong>見出し</strong>:行を選択 → 「📋 見出し」で灰色背景・大きめ文字<br>
+      ■ <strong>太字</strong>:選択 → 「B 太字」で太字に / 「太字解除」で戻す<br>
+      ■ <strong>番号挿入</strong>:行頭にカーソル → 「１」「(1)」「①」「イ」のいずれか。連続で押すと次の番号に進みます<br>
+      ■ <strong>インデント</strong>:行を選択 → 「→」「←」<br>
+      ■ <strong>改ページ</strong>:カーソル位置 → 「改ページ」
+    </div>
+
+    <div class="field">
+      <label>タイトル</label>
+      <input id="edit-title" type="text" placeholder="例:課税の対象">
+    </div>
+    <div class="field" style="max-width:200px;">
+      <label>ランク</label>
+      <select id="edit-rank">
+        <option value="A">A</option>
+        <option value="B">B</option>
+        <option value="C">C</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>本文</label>
+      <div class="gui-toolbar">
+        <button class="btn-mask-keyword" id="btn-mask-kw">■ キーワード</button>
+        <button class="btn-mask-sentence" id="btn-mask-sent">▮ 文ごと</button>
+        <button id="btn-unmask">マスク解除</button>
+        <span class="group-divider"></span>
+        <button class="btn-struct" id="btn-heading" title="灰色背景の見出しに変換">📋 見出し</button>
+        <button class="btn-struct" id="btn-bold" title="選択範囲を太字に"><strong>B</strong> 太字</button>
+        <button class="btn-struct" id="btn-unbold" title="太字を解除">太字解除</button>
+        <span class="group-divider"></span>
+        <button class="btn-struct" id="btn-num-zenkaku" title="１２３…を順に挿入">１</button>
+        <button class="btn-struct" id="btn-num-paren" title="(1)(2)(3)…を順に挿入">(1)</button>
+        <button class="btn-struct" id="btn-num-maru" title="①②③…を順に挿入">①</button>
+        <button class="btn-struct" id="btn-num-iroha" title="イロハニ…を順に挿入">イ</button>
+        <button class="btn-struct" id="btn-num-reset" title="番号カウンタをリセット">番号リセット</button>
+        <span class="group-divider"></span>
+        <button class="btn-struct" id="btn-indent-in" title="インデントを増やす">→</button>
+        <button class="btn-struct" id="btn-indent-out" title="インデントを減らす">←</button>
+        <span class="group-divider"></span>
+        <button class="btn-page-break" id="btn-page-break">改ページ</button>
+        <span class="spacer"></span>
+        <div class="mode-toggle">
+          <button id="mode-gui" class="active">GUI</button>
+          <button id="mode-text">テキスト</button>
+        </div>
+      </div>
+      <div id="gui-editor" class="gui-editor" contenteditable="true" spellcheck="false"></div>
+      <textarea id="text-editor" style="display:none; width:100%; min-height:320px; padding:14px 16px; border:1px solid #d8d3c4; border-radius:0 0 6px 6px; border-top:none; font-family:'SF Mono',Menlo,Consolas,monospace; font-size:13px;"></textarea>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="btn-save">保存(新規追加)</button>
+      <button id="btn-update" style="display:none;">更新</button>
+      <button id="btn-cancel" style="display:none;">キャンセル</button>
+      <button id="btn-preview">プレビュー</button>
+    </div>
+
+    <div id="preview-area" style="display:none; margin-top:16px;">
+      <div style="font-size:13px; color:#6b6961; margin-bottom:6px;">プレビュー(クリックで答えを表示)</div>
+      <div class="paper" id="preview-paper"></div>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <div style="font-size:13px; color:#6b6961; margin-bottom:8px;">登録済み一覧</div>
+      <div id="list"></div>
+    </div>
+  </div>
+
+  <!-- DATA -->
+  <div class="panel" id="panel-data">
+    <div class="help">
+      <strong>📱 iPadとPCでデータを同期する手順</strong><br>
+      ① <strong>「ファイルに書き出す」</strong>でJSONファイルをダウンロード<br>
+      ② ダウンロードしたファイルを<strong>iCloud Drive・Google Drive・Dropbox等</strong>の同期フォルダに置く<br>
+      ③ もう一方の端末で<strong>「ファイルから読み込む」</strong>を押し、同じファイルを選択<br>
+      <div class="tip">💡 推奨ファイル名:<code>consumption_tax_theory.json</code>。常に同じ名前を上書き保存していけば、最新版を同期できます。</div>
+      <div class="tip">💡 編集や保存をするたびに、現在のデータは自動的にブラウザに保存されます(localStorage)。書き出しは「他の端末と共有したいとき」だけ実行すればOKです。</div>
+    </div>
+
+    <div style="background:#fff; padding:14px; border-radius:8px; border:1px solid #d8d3c4; margin-bottom:12px;">
+      <div style="font-size:13px; color:#6b6961; margin-bottom:8px;">📤 ファイルに書き出す(エクスポート)</div>
+      <div class="actions">
+        <button class="btn-success" id="btn-download">💾 JSONファイルをダウンロード</button>
+        <span style="font-size:12px; color:#6b6961; align-self:center;">登録件数:<span id="item-count">0</span>件</span>
+      </div>
+    </div>
+
+    <div style="background:#fff; padding:14px; border-radius:8px; border:1px solid #d8d3c4; margin-bottom:12px;">
+      <div style="font-size:13px; color:#6b6961; margin-bottom:8px;">📥 ファイルから読み込む(インポート)</div>
+      <div class="actions">
+        <input type="file" id="file-input" accept=".json,application/json" style="display:none;">
+        <button class="btn-primary" id="btn-upload">📂 JSONファイルを選択して読み込む</button>
+        <label style="font-size:12px; color:#6b6961; align-self:center;">
+          <input type="checkbox" id="merge-mode"> 既存データと合体(チェックなしで上書き)
+        </label>
+      </div>
+    </div>
+
+    <details style="background:#fff; padding:14px; border-radius:8px; border:1px solid #d8d3c4; margin-bottom:12px;">
+      <summary style="font-size:13px; color:#6b6961; cursor:pointer;">📋 テキストでコピペしたい場合(クリックで展開)</summary>
+      <div style="margin-top:12px;">
+        <textarea id="json-area" placeholder='[{"title":"...","rank":"A","body":"..."}]'></textarea>
+        <div class="actions">
+          <button id="btn-import-text">テキストから読み込む</button>
+          <button id="btn-export-text">現在のデータを表示</button>
+          <button id="btn-sample">サンプルを表示</button>
+        </div>
+      </div>
+    </details>
+
+    <div style="background:#fff; padding:14px; border-radius:8px; border:1px solid #d8d3c4;">
+      <div style="font-size:13px; color:#6b6961; margin-bottom:8px;">⚠️ 危険な操作</div>
+      <div class="actions">
+        <button class="btn-danger" id="btn-clear">全データを削除</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'consumption_tax_theory_master_v1';
+  const PAGE_BREAK_TOKEN = '<<<PAGEBREAK>>>';
+  const IND1_PREFIX = '#I1# ';
+  const IND2_PREFIX = '#I2# ';
+  const IND3_PREFIX = '#I3# ';
+  const IND4_PREFIX = '#I4# ';
+  const HEADING_PREFIX = '#H# ';
+  const BOLD_START = '**';
+  const BOLD_END = '**';
+
+  const state = {
+    items: [],
+    currentIdx: 0,
+    currentPage: 0,
+    editingId: null,
+    filterRank: 'A',
+    maskMode: 'both',
+    editorMode: 'gui',
+    counters: { zenkaku: 0, paren: 0, maru: 0, iroha: 0 },
+    lastSavedAt: null,
+    dirty: false
+  };
+
+  const IROHA = ['イ','ロ','ハ','ニ','ホ','ヘ','ト','チ','リ','ヌ','ル','ヲ','ワ','カ','ヨ','タ','レ','ソ','ツ','ネ','ナ','ラ','ム','ウ','ヰ','ノ','オ','ク','ヤ','マ','ケ','フ','コ','エ','テ','ア','サ','キ','ユ','メ','ミ','シ','ヱ','ヒ','モ','セ','ス'];
+  const MARU = ['①','②','③','④','⑤','⑥','⑦','⑧','⑨','⑩','⑪','⑫','⑬','⑭','⑮','⑯','⑰','⑱','⑲','⑳'];
+  const ZENKAKU = ['１','２','３','４','５','６','７','８','９','10','11','12','13','14','15','16','17','18','19','20'];
+
+  const SAMPLE = [
+    {
+      title: '【サンプル】課税の対象(架空)',
+      rank: 'A',
+      body: '#H# 課税の対象\n１ 国内取引\n[[国内]]において[[事業者]]が行った[[資産の譲渡等]]及び[[特定仕入れ]]には、消費税を課する。\n２ 資産の譲渡等の意義\n「資産の譲渡等」とは、事業として[[対価を得て]]行われる次のものをいう。\n#I1# ① [[資産の譲渡]]\n#I1# ② [[資産の貸付け]]\n#I1# ③ [[役務の提供]]\n３ 課税の対象となる4要件\n次の[[４つの要件]]をすべて満たすものが課税の対象となる。\n#I1# ① [[国内]]において行われること\n#I1# ② [[事業者]]が事業として行うものであること\n#I1# ③ [[対価を得て]]行われるものであること\n#I1# ④ [[資産の譲渡等]]に該当すること\n<<<PAGEBREAK>>>\n４ 輸入取引\n{{保税地域から引き取られる外国貨物には、消費税を課する。}}\n５ 趣旨\n{{消費税は、消費一般に広く公平に負担を求める観点から設けられた税であり、税の累積を排除するために仕入税額控除の仕組みが設けられている。}}'
+    },
+    {
+      title: '【サンプル】仕入税額控除(架空)',
+      rank: 'A',
+      body: '#H# 仕入税額控除\n１ 意義\n事業者が、国内において[[課税仕入れ]]を行った場合には、その課税仕入れを行った日の属する課税期間の[[課税標準額に対する消費税額]]から、課税仕入れ等の税額の合計額を控除する。\n２ 課税仕入れの意義\n「課税仕入れ」とは、事業者が、事業として他の者から[[資産を譲り受け]]、若しくは[[借り受け]]、又は[[役務の提供を受ける]]こと(非課税となるものを除く)をいう。\n３ 控除の方式\n(1) [[個別対応方式]]\n課税仕入れ等を次の3つに区分して計算する方式。\n#I1# イ [[課税売上げにのみ要するもの]]…全額控除\n#I1# ロ [[非課税売上げにのみ要するもの]]…控除不可\n#I1# ハ [[課税・非課税共通して要するもの]]…課税売上割合を乗じた額を控除\n(2) [[一括比例配分方式]]\n{{課税仕入れ等の税額の合計額に課税売上割合を乗じて計算する方式。いったん採用したら2年間は継続適用しなければならない。}}'
+    }
+  ];
+
+  function uid(){ return 'i-' + Date.now() + '-' + Math.random().toString(36).slice(2,7); }
+
+  function load(){
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) state.items = JSON.parse(raw);
+    } catch(e){}
+  }
+  function save(){
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.items));
+      state.dirty = true;
+      updateSyncStatus();
+    } catch(e){}
+  }
+
+  function updateSyncStatus(){
+    const el = document.getElementById('sync-status-display');
+    const count = document.getElementById('item-count');
+    if (count) count.textContent = state.items.length;
+    if (!el) return;
+    if (state.dirty){
+      el.innerHTML = '<span class="sync-status"><span class="sync-dot"></span>未書き出し</span>';
+    } else if (state.lastSavedAt){
+      el.innerHTML = '<span class="sync-status synced"><span class="sync-dot"></span>書き出し済み</span>';
+    } else {
+      el.innerHTML = '';
+    }
+  }
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function filtered(){
+    if (state.filterRank === 'all') return state.items;
+    return state.items.filter(i => i.rank === state.filterRank);
+  }
+
+  function splitPages(body){
+    return body.split(PAGE_BREAK_TOKEN).map(s => s.replace(/^\n+|\n+$/g, ''));
+  }
+
+  function inlineMarks(s){
+    s = s.replace(/\{\{([\s\S]*?)\}\}/g, (m, inner) => '<span class="mark-sent" data-type="sent">' + inner + '</span>');
+    s = s.replace(/\[\[([^\[\]\n]+?)\]\]/g, (m, inner) => '<span class="mark-kw" data-type="kw">' + inner + '</span>');
+    s = s.replace(/\*\*([^\*\n]+?)\*\*/g, (m, inner) => '<span class="mark-bold" data-type="bold">' + inner + '</span>');
+    return s;
+  }
+
+  function textToEditorHtml(text){
+    const PB_MARK = '\u0001PB\u0001';
+    const tokenized = text.split(PAGE_BREAK_TOKEN).join('\n' + PB_MARK + '\n');
+    const lines = tokenized.split('\n');
+    let html = '';
+    for (const line of lines){
+      if (line === PB_MARK){
+        html += '<div class="page-break" data-type="pb" contenteditable="false">\u200B</div>';
+        continue;
+      }
+      let cls = '';
+      let content = line;
+      if (content.startsWith(HEADING_PREFIX)){ 
+        cls = 'heading-block'; 
+        content = content.slice(HEADING_PREFIX.length); 
+      }
+      else if (content.startsWith(IND4_PREFIX)){ 
+        cls = 'indent-4-block'; 
+        content = content.slice(IND4_PREFIX.length); 
+      }
+      else if (content.startsWith(IND3_PREFIX)){ 
+        cls = 'indent-3-block'; 
+        content = content.slice(IND3_PREFIX.length); 
+      }
+      else if (content.startsWith(IND2_PREFIX)){ 
+        cls = 'indent-2-block'; 
+        content = content.slice(IND2_PREFIX.length); 
+      }
+      else if (content.startsWith(IND1_PREFIX)){ 
+        cls = 'indent-1-block'; 
+        content = content.slice(IND1_PREFIX.length); 
+      }
+      const escaped = inlineMarks(escapeHtml(content));
+      const inner = escaped || '<br>';
+      if (cls){
+        html += '<div class="' + cls + '" data-block="1">' + inner + '</div>';
+      } else {
+        html += '<div data-block="1">' + inner + '</div>';
+      }
+    }
+    return html;
+  }
+
+  function editorHtmlToText(root){
+    const lines = [];
+    function getInline(node){
+      let out = '';
+      function walk(n){
+        if (n.nodeType === Node.TEXT_NODE){
+          out += n.nodeValue;
+        } else if (n.nodeType === Node.ELEMENT_NODE){
+          if (n.tagName === 'BR'){ return; }
+          if (n.classList && n.classList.contains('mark-kw')){
+            out += '[[' + n.textContent + ']]';
+            return;
+          }
+          if (n.classList && n.classList.contains('mark-sent')){
+            out += '{{' + n.textContent + '}}';
+            return;
+          }
+          if (n.classList && n.classList.contains('mark-bold')){
+            out += '**' + n.textContent + '**';
+            return;
+          }
+          for (const c of n.childNodes) walk(c);
+        }
+      }
+      for (const c of node.childNodes) walk(c);
+      return out;
+    }
+    for (const child of root.childNodes){
+      if (child.nodeType === Node.ELEMENT_NODE){
+        if (child.classList && child.classList.contains('page-break')){
+          lines.push(PAGE_BREAK_TOKEN);
+          continue;
+        }
+        if (child.tagName === 'DIV'){
+          let prefix = '';
+          if (child.classList.contains('heading-block')) prefix = HEADING_PREFIX;
+          else if (child.classList.contains('indent-4-block')) prefix = IND4_PREFIX;
+          else if (child.classList.contains('indent-3-block')) prefix = IND3_PREFIX;
+          else if (child.classList.contains('indent-2-block')) prefix = IND2_PREFIX;
+          else if (child.classList.contains('indent-1-block')) prefix = IND1_PREFIX;
+          let txt = getInline(child);
+          lines.push(prefix + txt);
+          continue;
+        }
+        if (child.tagName === 'BR'){
+          lines.push('');
+          continue;
+        }
+        lines.push(getInline(child));
+      } else if (child.nodeType === Node.TEXT_NODE){
+        if (child.nodeValue.trim()){
+          lines.push(child.nodeValue);
+        }
+      }
+    }
+    return lines.join('\n');
+  }
+
+  function renderPageBody(pageText, mode){
+    const lines = pageText.split('\n');
+    let html = '';
+    for (const line of lines){
+      let cls = '';
+      let isHeading = false;
+      let content = line;
+      
+      if (content.startsWith(HEADING_PREFIX)){ 
+        isHeading = true; 
+        content = content.slice(HEADING_PREFIX.length); 
+      }
+      else if (content.startsWith(IND4_PREFIX)){ 
+        cls = 'indent-4'; 
+        content = content.slice(IND4_PREFIX.length); 
+      }
+      else if (content.startsWith(IND3_PREFIX)){ 
+        cls = 'indent-3'; 
+        content = content.slice(IND3_PREFIX.length); 
+      }
+      else if (content.startsWith(IND2_PREFIX)){ 
+        cls = 'indent-2'; 
+        content = content.slice(IND2_PREFIX.length); 
+      }
+      else if (content.startsWith(IND1_PREFIX)){ 
+        cls = 'indent-1'; 
+        content = content.slice(IND1_PREFIX.length); 
+      }
+
+      // 番号で始まるかチェック(全角数字+ピリオド、括弧数字、丸数字、イロハ)
+      const hasNumber = /^([１-９][0-9]*\.|[(（][0-9]+[)）]|[①-⑳]|[イロハニホヘトチリヌルヲワカヨタレソツネナラムウヰノオクヤマケフコエテアサキユメミシヱヒモセス])\s/.test(content);
+
+      let s = escapeHtml(content);
+      
+      // 太字マーカー
+      s = s.replace(/\*\*([^\*\n]+?)\*\*/g, (m, inner) => {
+        return '<span class="bold-text">' + inner + '</span>';
+      });
+      
+      // マスク
+      s = s.replace(/\{\{([\s\S]*?)\}\}/g, (m, inner) => {
+        const txt = inner.trim();
+        if (mode === 'none' || mode === 'keyword') {
+          return '<span class="sentence-hint">' + txt + '</span>';
+        }
+        return '<span class="sentence-mask" data-mask="1">' + txt + '</span>';
+      });
+      s = s.replace(/\[\[([^\[\]\n]+?)\]\]/g, (m, inner) => {
+        if (mode === 'none' || mode === 'sentence') {
+          return '<span style="color:#c2185b; font-weight:500;">' + inner + '</span>';
+        }
+        return '<span class="mask" data-mask="1">' + inner + '</span>';
+      });
+
+      if (isHeading){
+        html += '<div class="heading-line">' + (s || '&nbsp;') + '</div>';
+      } else {
+        let divClass = cls;
+        if (hasNumber && !cls) divClass = 'has-number';
+        else if (hasNumber && cls) divClass = cls + ' has-number';
+
+        if (divClass){
+          html += '<div class="' + divClass + '">' + (s || '&nbsp;') + '</div>';
+        } else {
+          html += '<div>' + (s || '&nbsp;') + '</div>';
+        }
+      }
+    }
+    return html;
+  }
+
+  function renderStudy(animate){
+    const list = filtered();
+    const display = document.getElementById('display');
+    const counter = document.getElementById('counter');
+    const pageCounter = document.getElementById('page-counter');
+    if (list.length === 0){
+      display.innerHTML = '<div class="empty">該当する理論がありません。<br>「編集」タブから追加するか、「データ管理」タブからファイルを読み込んでください。</div>';
+      counter.textContent = '0 / 0';
+      pageCounter.textContent = '- / -';
+      return;
+    }
+    if (state.currentIdx >= list.length) state.currentIdx = 0;
+    if (state.currentIdx < 0) state.currentIdx = list.length - 1;
+    const item = list[state.currentIdx];
+    const pages = splitPages(item.body);
+    if (state.currentPage >= pages.length) state.currentPage = pages.length - 1;
+    if (state.currentPage < 0) state.currentPage = 0;
+    const pageText = pages[state.currentPage];
+    const rankClass = item.rank === 'B' ? 'b' : (item.rank === 'C' ? 'c' : '');
+
+    let html = '';
+    if (state.currentPage === 0){
+      html += '<h3 class="theory-title"><span class="rank-badge ' + rankClass + '">' + item.rank + '</span>' + escapeHtml(item.title) + '</h3>';
+    } else {
+      html += '<h3 class="theory-title" style="color:#888780; font-size:14px; border-bottom-style:dashed;"><span class="rank-badge ' + rankClass + '">' + item.rank + '</span>' + escapeHtml(item.title) + '(続き)</h3>';
+    }
+    html += '<div>' + renderPageBody(pageText, state.maskMode) + '</div>';
+    if (pages.length > 1){
+      html += '<div class="page-footer">— p.' + (state.currentPage + 1) + ' / ' + pages.length + ' —</div>';
+    }
+
+    if (animate){
+      display.classList.remove('flipping');
+      void display.offsetWidth;
+      display.classList.add('flipping');
+    }
+    display.innerHTML = html;
+    counter.textContent = (state.currentIdx + 1) + ' / ' + list.length;
+    pageCounter.textContent = pages.length > 1 ? ('p.' + (state.currentPage + 1) + ' / ' + pages.length) : '1 / 1';
+
+    display.querySelectorAll('[data-mask]').forEach(el => {
+      el.addEventListener('click', () => el.classList.toggle('shown'));
+    });
+  }
+
+  function renderList(){
+    const wrap = document.getElementById('list');
+    if (state.items.length === 0){
+      wrap.innerHTML = '<div style="font-size:13px; color:#888780; padding:8px;">まだ登録がありません。</div>';
+      return;
+    }
+    wrap.innerHTML = state.items.map(item => {
+      const pageCount = splitPages(item.body).length;
+      const pageLabel = pageCount > 1 ? ' <span style="color:#888780; font-size:11px;">(' + pageCount + 'p)</span>' : '';
+      return '<div class="list-item">' +
+        '<div class="title">' + escapeHtml(item.title) + '<span class="rank-pill">' + item.rank + '</span>' + pageLabel + '</div>' +
+        '<button data-edit="' + item.id + '">編集</button>' +
+        '<button data-delete="' + item.id + '">削除</button>' +
+        '</div>';
+    }).join('');
+    wrap.querySelectorAll('[data-edit]').forEach(b => {
+      b.addEventListener('click', () => editItem(b.dataset.edit));
+    });
+    wrap.querySelectorAll('[data-delete]').forEach(b => {
+      b.addEventListener('click', () => deleteItem(b.dataset.delete));
+    });
+  }
+
+  function render(){
+    renderStudy();
+    renderList();
+    updateSyncStatus();
+  }
+
+  // Navigation
+  function goNextPage(){
+    const list = filtered();
+    if (list.length === 0) return;
+    const pages = splitPages(list[state.currentIdx].body);
+    if (state.currentPage < pages.length - 1){
+      state.currentPage++;
+      renderStudy(true);
+    } else if (state.currentIdx < list.length - 1){
+      state.currentIdx++;
+      state.currentPage = 0;
+      renderStudy(true);
+    }
+  }
+  function goPrevPage(){
+    const list = filtered();
+    if (list.length === 0) return;
+    if (state.currentPage > 0){
+      state.currentPage--;
+      renderStudy(true);
+    } else if (state.currentIdx > 0){
+      state.currentIdx--;
+      const pages = splitPages(list[state.currentIdx].body);
+      state.currentPage = pages.length - 1;
+      renderStudy(true);
+    }
+  }
+  function goNextTheory(){
+    const list = filtered();
+    if (list.length === 0) return;
+    state.currentIdx = (state.currentIdx < list.length - 1) ? state.currentIdx + 1 : 0;
+    state.currentPage = 0;
+    renderStudy(true);
+  }
+  function goPrevTheory(){
+    const list = filtered();
+    if (list.length === 0) return;
+    state.currentIdx = (state.currentIdx > 0) ? state.currentIdx - 1 : list.length - 1;
+    state.currentPage = 0;
+    renderStudy(true);
+  }
+
+  // Editor helpers
+  function getEditor(){ return document.getElementById('gui-editor'); }
+
+  function getCurrentBlock(){
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return null;
+    let node = sel.anchorNode;
+    const editor = getEditor();
+    if (!editor.contains(node)) return null;
+    while (node && node !== editor){
+      if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'DIV' && node.parentNode === editor){
+        return node;
+      }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  function getSelectedBlocks(){
+    const editor = getEditor();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return [];
+    const range = sel.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)) return [];
+    const blocks = [];
+    Array.from(editor.children).forEach(child => {
+      if (child.tagName === 'DIV' && !child.classList.contains('page-break')){
+        if (range.intersectsNode(child)) blocks.push(child);
+      }
+    });
+    return blocks;
+  }
+
+  function setBlockClass(block, newClass){
+    block.classList.remove('indent-1-block','indent-2-block','indent-3-block','indent-4-block');
+    if (newClass) block.classList.add(newClass);
+  }
+
+  function applyMaskToSelection(type){
+    const editor = getEditor();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed){
+      alert('隠したい部分を選択してから押してください。');
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)){
+      alert('本文エリア内で選択してください。');
+      return;
+    }
+    let parent = range.commonAncestorContainer;
+    if (parent.nodeType === Node.TEXT_NODE) parent = parent.parentNode;
+    if (parent.closest && parent.closest('.mark-kw, .mark-sent')){
+      alert('既にマスクされている部分です。');
+      return;
+    }
+    if (!sel.toString().trim()){
+      alert('空白以外の文字を選択してください。');
+      return;
+    }
+    const span = document.createElement('span');
+    span.className = (type === 'kw') ? 'mark-kw' : 'mark-sent';
+    span.setAttribute('data-type', type);
+    try {
+      range.surroundContents(span);
+    } catch(e) {
+      const frag = range.extractContents();
+      span.appendChild(frag);
+      range.insertNode(span);
+    }
+    sel.removeAllRanges();
+    attachMarkClickHandlers();
+  }
+
+  function unmaskSelection(){
+    const editor = getEditor();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0){
+      alert('解除したいマスクを選択してから押してください。');
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)){
+      alert('本文エリア内で選択してください。');
+      return;
+    }
+    if (sel.isCollapsed){
+      let node = range.startContainer;
+      if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
+      const mark = node.closest && node.closest('.mark-kw, .mark-sent');
+      if (mark) unwrapMark(mark);
+      return;
+    }
+    const marks = editor.querySelectorAll('.mark-kw, .mark-sent');
+    const toUnwrap = [];
+    marks.forEach(m => { if (range.intersectsNode(m)) toUnwrap.push(m); });
+    if (toUnwrap.length === 0){
+      alert('選択範囲にマスクが見つかりません。');
+      return;
+    }
+    toUnwrap.forEach(unwrapMark);
+    sel.removeAllRanges();
+  }
+
+  function unwrapMark(mark){
+    const parent = mark.parentNode;
+    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark);
+    parent.removeChild(mark);
+    parent.normalize();
+  }
+
+  // 見出しボタン:現在のブロックをheading-blockにする
+  function toggleHeading(){
+    const blocks = getSelectedBlocks();
+    if (blocks.length === 0){
+      const b = getCurrentBlock();
+      if (b) blocks.push(b);
+    }
+    if (blocks.length === 0){
+      alert('本文エリアにカーソルを置いてください。');
+      return;
+    }
+    blocks.forEach(b => {
+      if (b.classList.contains('heading-block')){
+        // 既に見出しなら解除
+        b.classList.remove('heading-block');
+      } else {
+        // 見出しにする(インデントは解除)
+        b.classList.remove('indent-1-block','indent-2-block');
+        b.classList.add('heading-block');
+      }
+    });
+  }
+
+  // 太字ボタン:選択範囲をmark-boldでラップ
+  function applyBold(){
+    const editor = getEditor();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || sel.isCollapsed){
+      alert('太字にしたい部分を選択してから押してください。');
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)){
+      alert('本文エリア内で選択してください。');
+      return;
+    }
+    let parent = range.commonAncestorContainer;
+    if (parent.nodeType === Node.TEXT_NODE) parent = parent.parentNode;
+    if (parent.closest && parent.closest('.mark-bold')){
+      alert('既に太字になっている部分です。');
+      return;
+    }
+    if (!sel.toString().trim()){
+      alert('空白以外の文字を選択してください。');
+      return;
+    }
+    const span = document.createElement('span');
+    span.className = 'mark-bold';
+    span.setAttribute('data-type', 'bold');
+    try {
+      range.surroundContents(span);
+    } catch(e) {
+      const frag = range.extractContents();
+      span.appendChild(frag);
+      range.insertNode(span);
+    }
+    sel.removeAllRanges();
+    attachBoldClickHandlers();
+  }
+
+  // 太字解除ボタン
+  function removeBold(){
+    const editor = getEditor();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0){
+      alert('解除したい太字を選択してから押してください。');
+      return;
+    }
+    const range = sel.getRangeAt(0);
+    if (!editor.contains(range.commonAncestorContainer)){
+      alert('本文エリア内で選択してください。');
+      return;
+    }
+    if (sel.isCollapsed){
+      let node = range.startContainer;
+      if (node.nodeType === Node.TEXT_NODE) node = node.parentNode;
+      const mark = node.closest && node.closest('.mark-bold');
+      if (mark) unwrapMark(mark);
+      return;
+    }
+    const marks = editor.querySelectorAll('.mark-bold');
+    const toUnwrap = [];
+    marks.forEach(m => { if (range.intersectsNode(m)) toUnwrap.push(m); });
+    if (toUnwrap.length === 0){
+      alert('選択範囲に太字が見つかりません。');
+      return;
+    }
+    toUnwrap.forEach(unwrapMark);
+    sel.removeAllRanges();
+  }
+
+  function attachBoldClickHandlers(){
+    document.querySelectorAll('#gui-editor .mark-bold').forEach(el => {
+      el.onclick = (e) => {
+        if (window.getSelection().toString().length > 0) return;
+        if (confirm('この太字を解除しますか?')) {
+          unwrapMark(el);
+        }
+      };
+    });
+  }
+
+  function insertPageBreak(){
+    const editor = getEditor();
+    const sel = window.getSelection();
+    const pb = createPageBreakElement();
+    if (!sel || sel.rangeCount === 0 || !editor.contains(sel.anchorNode)){
+      editor.appendChild(pb);
+      attachPageBreakHandlers();
+      return;
+    }
+    const block = getCurrentBlock();
+    if (block){
+      block.parentNode.insertBefore(pb, block.nextSibling);
+    } else {
+      const range = sel.getRangeAt(0);
+      let parent = range.commonAncestorContainer;
+      if (parent.nodeType === Node.TEXT_NODE) parent = parent.parentNode;
+      if (parent.closest && parent.closest('.mark-kw, .mark-sent')){
+        alert('マスク内には改ページを入れられません。');
+        return;
+      }
+      range.deleteContents();
+      range.insertNode(pb);
+    }
+    attachPageBreakHandlers();
+  }
+
+  function createPageBreakElement(){
+    const div = document.createElement('div');
+    div.className = 'page-break';
+    div.setAttribute('data-type', 'pb');
+    div.setAttribute('contenteditable', 'false');
+    div.innerHTML = '\u200B';
+    return div;
+  }
+
+  function attachMarkClickHandlers(){
+    document.querySelectorAll('#gui-editor .mark-kw, #gui-editor .mark-sent').forEach(el => {
+      el.onclick = (e) => {
+        if (window.getSelection().toString().length > 0) return;
+        if (confirm('このマスクを解除しますか?')) {
+          unwrapMark(el);
+        }
+      };
+    });
+  }
+  function attachPageBreakHandlers(){
+    document.querySelectorAll('#gui-editor .page-break').forEach(el => {
+      el.onclick = () => {
+        if (confirm('この改ページを削除しますか?')) {
+          el.parentNode.removeChild(el);
+        }
+      };
+    });
+  }
+
+  function insertNumberMarker(kind){
+    const editor = getEditor();
+    editor.focus();
+    let block = getCurrentBlock();
+    
+    // 最初の行(空のエディタ)の場合、新しいdivを作成
+    if (!block){
+      const newDiv = document.createElement('div');
+      newDiv.setAttribute('data-block', '1');
+      newDiv.innerHTML = '<br>';
+      if (editor.childNodes.length === 0 || (editor.childNodes.length === 1 && editor.firstChild.tagName === 'BR')){
+        editor.innerHTML = '';
+        editor.appendChild(newDiv);
+      } else {
+        editor.insertBefore(newDiv, editor.firstChild);
+      }
+      block = newDiv;
+    }
+    
+    let prefix = '';
+    if (kind === 'zenkaku'){
+      const n = state.counters.zenkaku;
+      prefix = (ZENKAKU[n] || String(n + 1)) + '. '; // ピリオド+半角スペース
+      state.counters.zenkaku++;
+    } else if (kind === 'paren'){
+      state.counters.paren++;
+      prefix = '（' + state.counters.paren + '） '; // 全角カッコ+半角スペース
+    } else if (kind === 'maru'){
+      prefix = MARU[state.counters.maru % MARU.length] + ' '; // 半角スペース
+      state.counters.maru++;
+    } else if (kind === 'iroha'){
+      prefix = IROHA[state.counters.iroha % IROHA.length] + ' '; // 半角スペース
+      state.counters.iroha++;
+    }
+    
+    const sel = window.getSelection();
+    const range = document.createRange();
+    range.setStart(block, 0);
+    range.collapse(true);
+    if (block.childNodes.length === 1 && block.firstChild.tagName === 'BR'){
+      block.removeChild(block.firstChild);
+    }
+    const node = document.createTextNode(prefix);
+    range.insertNode(node);
+    const newRange = document.createRange();
+    newRange.setStartAfter(node);
+    newRange.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+  }
+
+  function resetCounters(){
+    state.counters = { zenkaku: 0, paren: 0, maru: 0, iroha: 0 };
+  }
+
+  function indentIn(){
+    const blocks = getSelectedBlocks();
+    if (blocks.length === 0){
+      const b = getCurrentBlock();
+      if (b) blocks.push(b);
+    }
+    blocks.forEach(b => {
+      if (b.classList.contains('indent-3-block')) setBlockClass(b, 'indent-4-block');
+      else if (b.classList.contains('indent-2-block')) setBlockClass(b, 'indent-3-block');
+      else if (b.classList.contains('indent-1-block')) setBlockClass(b, 'indent-2-block');
+      else if (!b.classList.contains('indent-4-block')){
+        setBlockClass(b, 'indent-1-block');
+      }
+    });
+  }
+  function indentOut(){
+    const blocks = getSelectedBlocks();
+    if (blocks.length === 0){
+      const b = getCurrentBlock();
+      if (b) blocks.push(b);
+    }
+    blocks.forEach(b => {
+      if (b.classList.contains('indent-4-block')) setBlockClass(b, 'indent-3-block');
+      else if (b.classList.contains('indent-3-block')) setBlockClass(b, 'indent-2-block');
+      else if (b.classList.contains('indent-2-block')) setBlockClass(b, 'indent-1-block');
+      else if (b.classList.contains('indent-1-block')) setBlockClass(b, '');
+    });
+  }
+
+  function syncEditorMode(toMode){
+    if (toMode === state.editorMode) return;
+    const guiEditor = getEditor();
+    const textEditor = document.getElementById('text-editor');
+    if (toMode === 'text'){
+      const raw = editorHtmlToText(guiEditor);
+      textEditor.value = raw;
+      guiEditor.style.display = 'none';
+      textEditor.style.display = '';
+    } else {
+      guiEditor.innerHTML = textToEditorHtml(textEditor.value);
+      attachMarkClickHandlers();
+      attachPageBreakHandlers();
+      attachBoldClickHandlers();
+      textEditor.style.display = 'none';
+      guiEditor.style.display = '';
+    }
+    state.editorMode = toMode;
+    document.getElementById('mode-gui').classList.toggle('active', toMode === 'gui');
+    document.getElementById('mode-text').classList.toggle('active', toMode === 'text');
+  }
+
+  function getCurrentBodyText(){
+    if (state.editorMode === 'gui'){
+      return editorHtmlToText(getEditor());
+    } else {
+      return document.getElementById('text-editor').value;
+    }
+  }
+
+  function setEditorContent(text){
+    getEditor().innerHTML = textToEditorHtml(text || '');
+    document.getElementById('text-editor').value = text || '';
+    attachMarkClickHandlers();
+    attachPageBreakHandlers();
+    attachBoldClickHandlers();
+    resetCounters();
+  }
+
+  function editItem(id){
+    const item = state.items.find(i => i.id === id);
+    if (!item) return;
+    state.editingId = id;
+    document.getElementById('edit-title').value = item.title;
+    document.getElementById('edit-rank').value = item.rank;
+    setEditorContent(item.body);
+    document.getElementById('btn-save').style.display = 'none';
+    document.getElementById('btn-update').style.display = '';
+    document.getElementById('btn-cancel').style.display = '';
+    switchTab('edit');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function deleteItem(id){
+    if (!confirm('削除しますか?')) return;
+    state.items = state.items.filter(i => i.id !== id);
+    save(); render();
+  }
+
+  function cancelEdit(){
+    state.editingId = null;
+    document.getElementById('edit-title').value = '';
+    document.getElementById('edit-rank').value = 'A';
+    setEditorContent('');
+    document.getElementById('btn-save').style.display = '';
+    document.getElementById('btn-update').style.display = 'none';
+    document.getElementById('btn-cancel').style.display = 'none';
+    document.getElementById('preview-area').style.display = 'none';
+  }
+
+  function switchTab(name){
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === name);
+    });
+    document.querySelectorAll('.panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'panel-' + name);
+    });
+    if (name === 'data') updateSyncStatus();
+  }
+
+  // ===== File download / upload =====
+  function downloadJson(){
+    if (state.items.length === 0){
+      if (!confirm('登録データが0件です。空のファイルを書き出しますか?')) return;
+    }
+    const out = state.items.map(({id, ...rest}) => rest);
+    const json = JSON.stringify(out, null, 2);
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const date = new Date();
+    const ts = date.getFullYear() + ('0'+(date.getMonth()+1)).slice(-2) + ('0'+date.getDate()).slice(-2) +
+                '_' + ('0'+date.getHours()).slice(-2) + ('0'+date.getMinutes()).slice(-2);
+    a.href = url;
+    a.download = 'consumption_tax_theory_' + ts + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    state.dirty = false;
+    state.lastSavedAt = new Date();
+    updateSyncStatus();
+    setTimeout(() => alert('ファイルをダウンロードしました。\nファイル名:' + a.download + '\n\nお使いの端末のクラウド同期フォルダ(iCloud Drive / Google Drive 等)に保存してください。'), 200);
+  }
+
+  function uploadJsonFile(file){
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const arr = JSON.parse(e.target.result);
+        if (!Array.isArray(arr)) throw new Error('JSONは配列形式である必要があります');
+        const merge = document.getElementById('merge-mode').checked;
+        const imported = arr.map(x => ({
+          id: uid(),
+          title: String(x.title || ''),
+          rank: ['A','B','C'].includes(x.rank) ? x.rank : 'A',
+          body: String(x.body || '')
+        }));
+        if (merge){
+          state.items = state.items.concat(imported);
+          save(); render();
+          alert('合体しました(追加:' + imported.length + '件 / 合計:' + state.items.length + '件)');
+        } else {
+          if (state.items.length > 0 && !confirm('現在の' + state.items.length + '件のデータを上書きします。よろしいですか?\n(合体したい場合はキャンセル→「既存データと合体」をチェック)')){
+            return;
+          }
+          state.items = imported;
+          save(); render();
+          alert('読み込みました(' + imported.length + '件)');
+        }
+      } catch(err){
+        alert('ファイルの読み込みに失敗しました:' + err.message);
+      }
+    };
+    reader.onerror = () => alert('ファイル読み込みエラー');
+    reader.readAsText(file, 'utf-8');
+  }
+
+  // Events
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => switchTab(t.dataset.tab));
+  });
+
+  document.getElementById('filter-rank').addEventListener('change', e => {
+    state.filterRank = e.target.value;
+    state.currentIdx = 0;
+    state.currentPage = 0;
+    renderStudy();
+  });
+  document.getElementById('mask-mode').addEventListener('change', e => {
+    state.maskMode = e.target.value;
+    renderStudy();
+  });
+  document.getElementById('btn-prev-page').addEventListener('click', goPrevPage);
+  document.getElementById('btn-next-page').addEventListener('click', goNextPage);
+  document.getElementById('btn-prev-theory').addEventListener('click', goPrevTheory);
+  document.getElementById('btn-next-theory').addEventListener('click', goNextTheory);
+  document.getElementById('btn-show-all').addEventListener('click', () => {
+    document.querySelectorAll('#display [data-mask]').forEach(el => el.classList.add('shown'));
+  });
+  document.getElementById('btn-hide-all').addEventListener('click', () => {
+    document.querySelectorAll('#display [data-mask]').forEach(el => el.classList.remove('shown'));
+  });
+  document.getElementById('btn-shuffle').addEventListener('click', () => {
+    const list = filtered();
+    if (list.length > 1) state.currentIdx = Math.floor(Math.random() * list.length);
+    state.currentPage = 0;
+    renderStudy(true);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!document.getElementById('panel-study').classList.contains('active')) return;
+    if (document.activeElement && ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+    if (e.key === 'ArrowRight') { goNextPage(); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft') { goPrevPage(); e.preventDefault(); }
+  });
+
+  document.getElementById('btn-mask-kw').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    applyMaskToSelection('kw');
+  });
+  document.getElementById('btn-mask-sent').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    applyMaskToSelection('sent');
+  });
+  document.getElementById('btn-unmask').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    unmaskSelection();
+  });
+  document.getElementById('btn-heading').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    toggleHeading();
+  });
+  document.getElementById('btn-bold').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    applyBold();
+  });
+  document.getElementById('btn-unbold').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    removeBold();
+  });
+  document.getElementById('btn-page-break').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    insertPageBreak();
+  });
+  document.getElementById('btn-num-zenkaku').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    insertNumberMarker('zenkaku');
+  });
+  document.getElementById('btn-num-paren').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    insertNumberMarker('paren');
+  });
+  document.getElementById('btn-num-maru').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    insertNumberMarker('maru');
+  });
+  document.getElementById('btn-num-iroha').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    insertNumberMarker('iroha');
+  });
+  document.getElementById('btn-num-reset').addEventListener('click', () => {
+    resetCounters();
+    alert('番号カウンタをリセットしました。');
+  });
+  document.getElementById('btn-indent-in').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    indentIn();
+  });
+  document.getElementById('btn-indent-out').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    indentOut();
+  });
+  document.getElementById('mode-gui').addEventListener('click', () => syncEditorMode('gui'));
+  document.getElementById('mode-text').addEventListener('click', () => syncEditorMode('text'));
+
+  document.getElementById('gui-editor').addEventListener('paste', (e) => {
+    e.preventDefault();
+    const text = (e.clipboardData || window.clipboardData).getData('text');
+    document.execCommand('insertText', false, text);
+  });
+
+  document.getElementById('btn-save').addEventListener('click', () => {
+    const title = document.getElementById('edit-title').value.trim();
+    const rank = document.getElementById('edit-rank').value;
+    const body = getCurrentBodyText();
+    if (!title || !body.trim()) { alert('タイトルと本文を入力してください'); return; }
+    state.items.push({ id: uid(), title, rank, body });
+    save(); cancelEdit(); render();
+    alert('保存しました');
+  });
+  document.getElementById('btn-update').addEventListener('click', () => {
+    const item = state.items.find(i => i.id === state.editingId);
+    if (!item) return;
+    item.title = document.getElementById('edit-title').value.trim();
+    item.rank = document.getElementById('edit-rank').value;
+    item.body = getCurrentBodyText();
+    save(); cancelEdit(); render();
+    alert('更新しました');
+  });
+  document.getElementById('btn-cancel').addEventListener('click', cancelEdit);
+
+  document.getElementById('btn-preview').addEventListener('click', () => {
+    const body = getCurrentBodyText();
+    const area = document.getElementById('preview-area');
+    const paper = document.getElementById('preview-paper');
+    if (!body.trim()){ alert('本文を入力してください'); return; }
+    const pages = splitPages(body);
+    let html = '';
+    pages.forEach((pageText, i) => {
+      html += '<div style="margin-bottom:16px; padding-bottom:16px; ' + (i < pages.length - 1 ? 'border-bottom:1px dashed #d8d3c4;' : '') + '">';
+      if (pages.length > 1) html += '<div style="font-size:11px; color:#888780; margin-bottom:8px;">p.' + (i+1) + ' / ' + pages.length + '</div>';
+      html += '<div>' + renderPageBody(pageText, 'both') + '</div>';
+      html += '</div>';
+    });
+    paper.innerHTML = html;
+    paper.querySelectorAll('[data-mask]').forEach(el => {
+      el.addEventListener('click', () => el.classList.toggle('shown'));
+    });
+    area.style.display = '';
+    area.scrollIntoView({behavior:'smooth', block:'nearest'});
+  });
+
+  // Data management
+  document.getElementById('btn-download').addEventListener('click', downloadJson);
+  document.getElementById('btn-upload').addEventListener('click', () => {
+    document.getElementById('file-input').click();
+  });
+  document.getElementById('file-input').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) uploadJsonFile(file);
+    e.target.value = ''; // reset for re-selection
+  });
+
+  document.getElementById('btn-import-text').addEventListener('click', () => {
+    const txt = document.getElementById('json-area').value;
+    try {
+      const arr = JSON.parse(txt);
+      if (!Array.isArray(arr)) throw new Error('配列ではありません');
+      const merge = document.getElementById('merge-mode').checked;
+      const imported = arr.map(x => ({
+        id: uid(),
+        title: String(x.title || ''),
+        rank: ['A','B','C'].includes(x.rank) ? x.rank : 'A',
+        body: String(x.body || '')
+      }));
+      if (merge){
+        state.items = state.items.concat(imported);
+      } else {
+        if (state.items.length > 0 && !confirm('現在のデータを上書きします。よろしいですか?')) return;
+        state.items = imported;
+      }
+      save(); render();
+      alert('読み込みました(' + imported.length + '件)');
+    } catch(e) {
+      alert('JSONの解析に失敗しました: ' + e.message);
+    }
+  });
+  document.getElementById('btn-export-text').addEventListener('click', () => {
+    const out = state.items.map(({id, ...rest}) => rest);
+    document.getElementById('json-area').value = JSON.stringify(out, null, 2);
+  });
+  document.getElementById('btn-sample').addEventListener('click', () => {
+    document.getElementById('json-area').value = JSON.stringify(SAMPLE, null, 2);
+  });
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (!confirm('全データを削除します。よろしいですか?\n(削除前にファイルにバックアップ書き出しを推奨)')) return;
+    state.items = [];
+    save(); render();
+  });
+
+  // Warn before leaving with unsaved file export
+  window.addEventListener('beforeunload', (e) => {
+    // Don't block — localStorage保存はされているので、ファイル書き出し未実行は警告のみ
+  });
+
+  // Init
+  load();
+  render();
+  updateSyncStatus();
+})();
+</script>
+</body>
+</html>
