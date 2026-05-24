@@ -533,6 +533,60 @@
     .gui-toolbar button { font-size: 11px; padding: 4px 8px; }
   }
 
+  /* Theory navigation bar (study tab) */
+  .theory-bar {
+    display: flex;
+    gap: 5px;
+    overflow-x: auto;
+    padding: 4px 0 6px;
+    scrollbar-width: thin;
+    scrollbar-color: #d8d3c4 transparent;
+    -webkit-overflow-scrolling: touch;
+    flex-basis: 100%;
+    margin-top: 4px;
+  }
+  .theory-bar::-webkit-scrollbar { height: 4px; }
+  .theory-bar::-webkit-scrollbar-thumb { background: #d8d3c4; border-radius: 2px; }
+  .theory-chip {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    border: 1px solid #d8d3c4;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    color: #2a2a28;
+    font-family: inherit;
+    transition: background 0.12s;
+  }
+  .theory-chip:hover { background: #f5f3ed; }
+  .theory-chip.active { background: #e8443a; color: #fff; border-color: #e8443a; }
+
+  /* Edit list chips */
+  .edit-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    padding: 4px 8px;
+    border: 1px solid #d8d3c4;
+    border-radius: 16px;
+    background: #fff;
+    font-size: 12px;
+    color: #2a2a28;
+  }
+  .edit-chip .chip-title {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 0 2px;
+  }
+  .edit-chip .chip-title:hover { color: #e8443a; }
+
   @media print {
     .tabs, .toolbar, .nav, #panel-edit, #panel-data { display: none !important; }
     body { background: #fff; }
@@ -568,10 +622,7 @@
         <option value="sentence">文単位のみ</option>
         <option value="none">隠さない</option>
       </select>
-      <div style="flex-basis:100%; display:flex; align-items:center; gap:8px; margin-top:4px;">
-        <label style="white-space:nowrap;">理論</label>
-        <select id="theory-select" style="flex:1; min-width:0;"></select>
-      </div>
+      <div id="theory-bar" class="theory-bar"></div>
       <span class="spacer"></span>
       <button id="btn-show-all">全て表示</button>
       <button id="btn-hide-all">全て隠す</button>
@@ -669,7 +720,14 @@
     </div>
 
     <div style="margin-top: 24px;">
-      <div style="font-size:13px; color:#6b6961; margin-bottom:8px;">登録済み一覧</div>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
+        <span style="font-size:13px; color:#6b6961;">登録済み一覧</span>
+        <span id="list-count" style="font-size:12px; color:#888780;"></span>
+        <span style="flex:1;"></span>
+        <button id="btn-select-mode" style="font-size:12px; padding:4px 10px;">一括削除</button>
+        <button id="btn-delete-selected" class="btn-danger" style="font-size:12px; padding:4px 10px; display:none;">削除する</button>
+        <button id="btn-cancel-select" style="font-size:12px; padding:4px 10px; display:none;">キャンセル</button>
+      </div>
       <div id="list"></div>
     </div>
   </div>
@@ -749,7 +807,8 @@
     editorMode: 'gui',
     counters: { zenkaku: 0, paren: 0, maru: 0, iroha: 0 },
     lastSavedAt: null,
-    dirty: false
+    dirty: false,
+    selectMode: false
   };
 
   const IROHA = ['イ','ロ','ハ','ニ','ホ','ヘ','ト','チ','リ','ヌ','ル','ヲ','ワ','カ','ヨ','タ','レ','ソ','ツ','ネ','ナ','ラ','ム','ウ','ヰ','ノ','オ','ク','ヤ','マ','ケ','フ','コ','エ','テ','ア','サ','キ','ユ','メ','ミ','シ','ヱ','ヒ','モ','セ','ス'];
@@ -1055,55 +1114,91 @@
       el.addEventListener('click', () => el.classList.toggle('shown'));
     });
 
-    const theorySelect = document.getElementById('theory-select');
-    if (theorySelect) theorySelect.value = String(state.currentIdx);
+    if (animate) window.scrollTo({top: 0, behavior: 'smooth'});
+    const bar = document.getElementById('theory-bar');
+    if (bar) {
+      bar.querySelectorAll('.theory-chip').forEach((chip, i) => {
+        chip.classList.toggle('active', i === state.currentIdx);
+      });
+      const activeChip = bar.querySelector('.theory-chip.active');
+      if (activeChip) activeChip.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+    }
   }
 
   function renderList(){
     const wrap = document.getElementById('list');
+    const countEl = document.getElementById('list-count');
+    if (countEl) countEl.textContent = state.items.length + '件';
     if (state.items.length === 0){
-      wrap.innerHTML = '<div style="font-size:13px; color:#888780; padding:8px;">まだ登録がありません。</div>';
+      wrap.innerHTML = '<div style="font-size:13px; color:#888780; padding:8px 0;">まだ登録がありません。</div>';
       return;
     }
-    wrap.innerHTML = state.items.map((item, idx) => {
-      const pageCount = splitPages(item.body).length;
-      const pageLabel = pageCount > 1 ? ' <span style="color:#888780; font-size:11px;">(' + pageCount + 'p)</span>' : '';
-      const upDisabled = idx === 0 ? ' disabled' : '';
-      const downDisabled = idx === state.items.length - 1 ? ' disabled' : '';
-      return '<div class="list-item">' +
-        '<div class="title">' + escapeHtml(item.title) + '<span class="rank-pill">' + item.rank + '</span>' + pageLabel + '</div>' +
-        '<button data-up="' + item.id + '" style="padding:4px 7px;"' + upDisabled + '>▲</button>' +
-        '<button data-down="' + item.id + '" style="padding:4px 7px;"' + downDisabled + '>▼</button>' +
-        '<button data-edit="' + item.id + '">編集</button>' +
-        '<button data-delete="' + item.id + '">削除</button>' +
-        '</div>';
+    const chipsHtml = state.items.map((item, idx) => {
+      const isFirst = idx === 0, isLast = idx === state.items.length - 1;
+      const rankCls = item.rank === 'B' ? ' b' : item.rank === 'C' ? ' c' : '';
+      const actions = state.selectMode ? '' :
+        '<button data-up="' + item.id + '" style="padding:2px 5px; font-size:11px;"' + (isFirst ? ' disabled' : '') + '>▲</button>' +
+        '<button data-down="' + item.id + '" style="padding:2px 5px; font-size:11px;"' + (isLast ? ' disabled' : '') + '>▼</button>' +
+        '<button data-edit-id="' + item.id + '" style="padding:2px 6px; font-size:11px;">編集</button>' +
+        '<button data-delete="' + item.id + '" style="padding:2px 5px; font-size:11px; color:#c93c30;">×</button>';
+      const checkbox = state.selectMode ?
+        '<input type="checkbox" class="chip-check" data-id="' + item.id + '" style="margin:0 2px 0 0;">' : '';
+      return '<div class="edit-chip" data-id="' + item.id + '">' +
+        checkbox +
+        '<span class="rank-badge' + rankCls + '" style="font-size:10px;padding:1px 5px;margin:0;">' + item.rank + '</span>' +
+        '<span class="chip-title" data-edit-id="' + item.id + '">' + escapeHtml(item.title) + '</span>' +
+        actions + '</div>';
     }).join('');
-    wrap.querySelectorAll('[data-up]').forEach(b => {
-      b.addEventListener('click', () => moveItem(b.dataset.up, 'up'));
-    });
-    wrap.querySelectorAll('[data-down]').forEach(b => {
-      b.addEventListener('click', () => moveItem(b.dataset.down, 'down'));
-    });
-    wrap.querySelectorAll('[data-edit]').forEach(b => {
-      b.addEventListener('click', () => editItem(b.dataset.edit));
-    });
-    wrap.querySelectorAll('[data-delete]').forEach(b => {
-      b.addEventListener('click', () => deleteItem(b.dataset.delete));
-    });
+    wrap.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:6px;padding:4px 0;">' + chipsHtml + '</div>';
+    wrap.querySelectorAll('[data-edit-id]').forEach(el => el.addEventListener('click', () => editItem(el.dataset.editId)));
+    wrap.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => moveItem(b.dataset.up, 'up')));
+    wrap.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', () => moveItem(b.dataset.down, 'down')));
+    wrap.querySelectorAll('[data-delete]').forEach(b => b.addEventListener('click', () => deleteItem(b.dataset.delete)));
+    wrap.querySelectorAll('.chip-check').forEach(cb => cb.addEventListener('change', updateDeleteSelectedBtn));
+  }
+
+  function updateDeleteSelectedBtn(){
+    const count = document.querySelectorAll('#list .chip-check:checked').length;
+    const btn = document.getElementById('btn-delete-selected');
+    if (btn) btn.textContent = '削除する' + (count > 0 ? ' (' + count + ')' : '');
+  }
+
+  function toggleSelectMode(on){
+    state.selectMode = on;
+    const btnMode = document.getElementById('btn-select-mode');
+    const btnDel = document.getElementById('btn-delete-selected');
+    const btnCancel = document.getElementById('btn-cancel-select');
+    if (btnMode) btnMode.style.display = on ? 'none' : '';
+    if (btnDel) { btnDel.style.display = on ? '' : 'none'; btnDel.textContent = '削除する'; }
+    if (btnCancel) btnCancel.style.display = on ? '' : 'none';
+    renderList();
+  }
+
+  function deleteSelected(){
+    const ids = Array.from(document.querySelectorAll('#list .chip-check:checked')).map(cb => cb.dataset.id);
+    if (ids.length === 0){ alert('削除する項目を選択してください'); return; }
+    if (!confirm(ids.length + '件を削除しますか?')) return;
+    state.items = state.items.filter(i => !ids.includes(i.id));
+    toggleSelectMode(false);
+    save(); renderTheorySelect(); updateSyncStatus();
   }
 
   function renderTheorySelect(){
-    const sel = document.getElementById('theory-select');
-    if (!sel) return;
+    const bar = document.getElementById('theory-bar');
+    if (!bar) return;
     const list = filtered();
-    if (list.length === 0){
-      sel.innerHTML = '<option value="">（なし）</option>';
-      return;
-    }
-    sel.innerHTML = list.map((item, i) =>
-      '<option value="' + i + '">' + escapeHtml(item.title) + '</option>'
-    ).join('');
-    sel.value = String(state.currentIdx);
+    bar.innerHTML = '';
+    list.forEach((item, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'theory-chip' + (i === state.currentIdx ? ' active' : '');
+      btn.textContent = item.title;
+      btn.addEventListener('click', () => {
+        state.currentIdx = i;
+        state.currentPage = 0;
+        renderStudy(true);
+      });
+      bar.appendChild(btn);
+    });
   }
 
   function render(){
@@ -1631,7 +1726,7 @@
     } else if (direction === 'down' && idx < state.items.length - 1){
       [state.items[idx], state.items[idx + 1]] = [state.items[idx + 1], state.items[idx]];
     }
-    save(); renderList();
+    save(); renderList(); renderTheorySelect();
   }
 
   function cancelEdit(){
@@ -1726,11 +1821,10 @@
     renderStudy();
   });
 
-  document.getElementById('theory-select').addEventListener('change', e => {
-    state.currentIdx = parseInt(e.target.value, 10);
-    state.currentPage = 0;
-    renderStudy(true);
-  });
+  document.getElementById('btn-select-mode').addEventListener('click', () => toggleSelectMode(true));
+  document.getElementById('btn-delete-selected').addEventListener('click', deleteSelected);
+  document.getElementById('btn-cancel-select').addEventListener('click', () => toggleSelectMode(false));
+
   document.getElementById('mask-mode').addEventListener('change', e => {
     state.maskMode = e.target.value;
     renderStudy();
