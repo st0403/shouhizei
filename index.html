@@ -568,6 +568,10 @@
         <option value="sentence">文単位のみ</option>
         <option value="none">隠さない</option>
       </select>
+      <div style="flex-basis:100%; display:flex; align-items:center; gap:8px; margin-top:4px;">
+        <label style="white-space:nowrap;">理論</label>
+        <select id="theory-select" style="flex:1; min-width:0;"></select>
+      </div>
       <span class="spacer"></span>
       <button id="btn-show-all">全て表示</button>
       <button id="btn-hide-all">全て隠す</button>
@@ -1050,6 +1054,9 @@
     display.querySelectorAll('[data-mask]').forEach(el => {
       el.addEventListener('click', () => el.classList.toggle('shown'));
     });
+
+    const theorySelect = document.getElementById('theory-select');
+    if (theorySelect) theorySelect.value = String(state.currentIdx);
   }
 
   function renderList(){
@@ -1085,9 +1092,24 @@
     });
   }
 
+  function renderTheorySelect(){
+    const sel = document.getElementById('theory-select');
+    if (!sel) return;
+    const list = filtered();
+    if (list.length === 0){
+      sel.innerHTML = '<option value="">（なし）</option>';
+      return;
+    }
+    sel.innerHTML = list.map((item, i) =>
+      '<option value="' + i + '">' + escapeHtml(item.title) + '</option>'
+    ).join('');
+    sel.value = String(state.currentIdx);
+  }
+
   function render(){
     renderStudy();
     renderList();
+    renderTheorySelect();
     updateSyncStatus();
   }
 
@@ -1700,7 +1722,14 @@
     state.filterRank = e.target.value;
     state.currentIdx = 0;
     state.currentPage = 0;
+    renderTheorySelect();
     renderStudy();
+  });
+
+  document.getElementById('theory-select').addEventListener('change', e => {
+    state.currentIdx = parseInt(e.target.value, 10);
+    state.currentPage = 0;
+    renderStudy(true);
   });
   document.getElementById('mask-mode').addEventListener('change', e => {
     state.maskMode = e.target.value;
