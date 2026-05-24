@@ -16,7 +16,7 @@
     color: #2a2a28;
     line-height: 1.7;
   }
-  .container { max-width: 720px; margin: 0 auto; }
+  .container { max-width: 760px; margin: 0 auto; }
   h1 {
     font-size: 20px;
     font-weight: 500;
@@ -805,7 +805,7 @@
   }
 
   function splitPages(body){
-    return body.split(PAGE_BREAK_TOKEN).map(s => s.replace(/^\n+|\n+$/g, ''));
+    return body.split(PAGE_BREAK_TOKEN).map(s => s.replace(/^\n+/, '').replace(/\n$/, ''));
   }
 
   function inlineMarks(s){
