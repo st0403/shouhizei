@@ -695,7 +695,7 @@
         <input type="file" id="file-input" accept=".json,application/json" style="display:none;">
         <button class="btn-primary" id="btn-upload">📂 JSONファイルを選択して読み込む</button>
         <label style="font-size:12px; color:#6b6961; align-self:center;">
-          <input type="checkbox" id="merge-mode"> 既存データと合体(チェックなしで上書き)
+          <input type="checkbox" id="merge-mode" checked> 既存データと合体(チェックなしで上書き)
         </label>
       </div>
     </div>
@@ -1058,15 +1058,25 @@
       wrap.innerHTML = '<div style="font-size:13px; color:#888780; padding:8px;">まだ登録がありません。</div>';
       return;
     }
-    wrap.innerHTML = state.items.map(item => {
+    wrap.innerHTML = state.items.map((item, idx) => {
       const pageCount = splitPages(item.body).length;
       const pageLabel = pageCount > 1 ? ' <span style="color:#888780; font-size:11px;">(' + pageCount + 'p)</span>' : '';
+      const upDisabled = idx === 0 ? ' disabled' : '';
+      const downDisabled = idx === state.items.length - 1 ? ' disabled' : '';
       return '<div class="list-item">' +
         '<div class="title">' + escapeHtml(item.title) + '<span class="rank-pill">' + item.rank + '</span>' + pageLabel + '</div>' +
+        '<button data-up="' + item.id + '" style="padding:4px 7px;"' + upDisabled + '>▲</button>' +
+        '<button data-down="' + item.id + '" style="padding:4px 7px;"' + downDisabled + '>▼</button>' +
         '<button data-edit="' + item.id + '">編集</button>' +
         '<button data-delete="' + item.id + '">削除</button>' +
         '</div>';
     }).join('');
+    wrap.querySelectorAll('[data-up]').forEach(b => {
+      b.addEventListener('click', () => moveItem(b.dataset.up, 'up'));
+    });
+    wrap.querySelectorAll('[data-down]').forEach(b => {
+      b.addEventListener('click', () => moveItem(b.dataset.down, 'down'));
+    });
     wrap.querySelectorAll('[data-edit]').forEach(b => {
       b.addEventListener('click', () => editItem(b.dataset.edit));
     });
@@ -1589,6 +1599,17 @@
     if (!confirm('削除しますか?')) return;
     state.items = state.items.filter(i => i.id !== id);
     save(); render();
+  }
+
+  function moveItem(id, direction){
+    const idx = state.items.findIndex(i => i.id === id);
+    if (idx === -1) return;
+    if (direction === 'up' && idx > 0){
+      [state.items[idx - 1], state.items[idx]] = [state.items[idx], state.items[idx - 1]];
+    } else if (direction === 'down' && idx < state.items.length - 1){
+      [state.items[idx], state.items[idx + 1]] = [state.items[idx + 1], state.items[idx]];
+    }
+    save(); renderList();
   }
 
   function cancelEdit(){
