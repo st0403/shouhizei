@@ -391,6 +391,42 @@
     line-height: 24px;
   }
 
+  /* Box group in paper display */
+  .paper .box-group {
+    border: 1px dashed #888780;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 2px;
+  }
+
+  /* Box markers in editor */
+  .gui-editor .box-marker {
+    display: block;
+    height: 22px;
+    margin: 2px 0;
+    text-align: center;
+    user-select: none;
+    font-size: 11px;
+    color: #6b6961;
+    line-height: 22px;
+    cursor: pointer;
+  }
+  .gui-editor .box-start-marker {
+    border-top: 1px dashed #888780;
+    border-left: 1px dashed #888780;
+    border-right: 1px dashed #888780;
+    border-radius: 2px 2px 0 0;
+  }
+  .gui-editor .box-start-marker::before { content: "┌─ 囲み ─"; }
+  .gui-editor .box-end-marker {
+    border-bottom: 1px dashed #888780;
+    border-left: 1px dashed #888780;
+    border-right: 1px dashed #888780;
+    border-radius: 0 0 2px 2px;
+  }
+  .gui-editor .box-end-marker::before { content: "─ 囲み ─┘"; }
+  .gui-toolbar .btn-box { border-color: #888780; }
+
   .mode-toggle {
     display: inline-flex;
     border: 1px solid #d8d3c4;
@@ -602,6 +638,7 @@
         <button class="btn-struct" id="btn-indent-out" title="インデントを減らす">←</button>
         <span class="group-divider"></span>
         <button class="btn-page-break" id="btn-page-break">改ページ</button>
+        <button class="btn-box" id="btn-box">囲む</button>
         <span class="spacer"></span>
         <div class="mode-toggle">
           <button id="mode-gui" class="active">GUI</button>
@@ -685,6 +722,8 @@
 (function(){
   const STORAGE_KEY = 'consumption_tax_theory_master_v1';
   const PAGE_BREAK_TOKEN = '<<<PAGEBREAK>>>';
+  const BOX_START_TOKEN = '<<<BOXSTART>>>';
+  const BOX_END_TOKEN = '<<<BOXEND>>>';
   const IND1_PREFIX = '#I1# ';
   const IND2_PREFIX = '#I2# ';
   const IND3_PREFIX = '#I3# ';
@@ -783,6 +822,14 @@
         html += '<div class="page-break" data-type="pb" contenteditable="false">\u200B</div>';
         continue;
       }
+      if (line === BOX_START_TOKEN){
+        html += '<div class="box-start-marker box-marker" data-type="bxs" contenteditable="false">\u200B</div>';
+        continue;
+      }
+      if (line === BOX_END_TOKEN){
+        html += '<div class="box-end-marker box-marker" data-type="bxe" contenteditable="false">\u200B</div>';
+        continue;
+      }
       let cls = '';
       let content = line;
       if (content.startsWith(HEADING_PREFIX)){ 
@@ -849,6 +896,14 @@
           lines.push(PAGE_BREAK_TOKEN);
           continue;
         }
+        if (child.classList && child.classList.contains('box-start-marker')){
+          lines.push(BOX_START_TOKEN);
+          continue;
+        }
+        if (child.classList && child.classList.contains('box-end-marker')){
+          lines.push(BOX_END_TOKEN);
+          continue;
+        }
         if (child.tagName === 'DIV'){
           let prefix = '';
           if (child.classList.contains('heading-block')) prefix = HEADING_PREFIX;
@@ -877,7 +932,10 @@
   function renderPageBody(pageText, mode){
     const lines = pageText.split('\n');
     let html = '';
+    let inBox = false;
     for (const line of lines){
+      if (line === BOX_START_TOKEN){ html += '<div class="box-group">'; inBox = true; continue; }
+      if (line === BOX_END_TOKEN){ if (inBox){ html += '</div>'; inBox = false; } continue; }
       let cls = '';
       let isHeading = false;
       let content = line;
@@ -942,6 +1000,7 @@
         }
       }
     }
+    if (inBox) html += '</div>';
     return html;
   }
 
@@ -1087,10 +1146,14 @@
     if (!editor.contains(range.commonAncestorContainer)) return [];
     const blocks = [];
     Array.from(editor.children).forEach(child => {
-      if (child.tagName === 'DIV' && !child.classList.contains('page-break')){
+      if (child.tagName === 'DIV' && !child.classList.contains('page-break') && !child.classList.contains('box-marker')){
         if (range.intersectsNode(child)) blocks.push(child);
       }
     });
+    if (blocks.length === 0 && range.collapsed) {
+      const b = getCurrentBlock();
+      if (b) blocks.push(b);
+    }
     return blocks;
   }
 
@@ -1329,6 +1392,57 @@
     });
   }
 
+  function createBoxMarkerElement(type){
+    const div = document.createElement('div');
+    div.className = (type === 'bxs' ? 'box-start-marker' : 'box-end-marker') + ' box-marker';
+    div.setAttribute('data-type', type);
+    div.setAttribute('contenteditable', 'false');
+    div.innerHTML = '​';
+    return div;
+  }
+
+  function attachBoxMarkerHandlers(){
+    document.querySelectorAll('#gui-editor .box-marker').forEach(el => {
+      el.onclick = () => {
+        const isStart = el.classList.contains('box-start-marker');
+        let pair = null;
+        if (isStart){
+          let s = el.nextElementSibling;
+          while (s){ if (s.classList.contains('box-end-marker')){ pair = s; break; } s = s.nextElementSibling; }
+        } else {
+          let s = el.previousElementSibling;
+          while (s){ if (s.classList.contains('box-start-marker')){ pair = s; break; } s = s.previousElementSibling; }
+        }
+        const msg = pair ? 'この囲みを削除しますか？(開始・終了マーカーを両方削除します)' : 'この囲みマーカーを削除しますか？';
+        if (confirm(msg)){
+          el.parentNode.removeChild(el);
+          if (pair) pair.parentNode.removeChild(pair);
+        }
+      };
+    });
+  }
+
+  function insertBox(){
+    const editor = getEditor();
+    const selected = getSelectedBlocks();
+    const startMarker = createBoxMarkerElement('bxs');
+    const endMarker = createBoxMarkerElement('bxe');
+    if (selected.length > 0){
+      selected[0].parentNode.insertBefore(startMarker, selected[0]);
+      selected[selected.length - 1].parentNode.insertBefore(endMarker, selected[selected.length - 1].nextSibling);
+    } else {
+      const block = getCurrentBlock();
+      if (block){
+        block.parentNode.insertBefore(startMarker, block);
+        block.parentNode.insertBefore(endMarker, block.nextSibling);
+      } else {
+        editor.appendChild(startMarker);
+        editor.appendChild(endMarker);
+      }
+    }
+    attachBoxMarkerHandlers();
+  }
+
   function insertNumberMarker(kind){
     const editor = getEditor();
     editor.focus();
@@ -1427,6 +1541,7 @@
       attachMarkClickHandlers();
       attachPageBreakHandlers();
       attachBoldClickHandlers();
+      attachBoxMarkerHandlers();
       textEditor.style.display = 'none';
       guiEditor.style.display = '';
     }
@@ -1449,6 +1564,7 @@
     attachMarkClickHandlers();
     attachPageBreakHandlers();
     attachBoldClickHandlers();
+    attachBoxMarkerHandlers();
     resetCounters();
   }
 
@@ -1588,6 +1704,16 @@
     if (document.activeElement && ['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
     if (e.key === 'ArrowRight') { goNextPage(); e.preventDefault(); }
     else if (e.key === 'ArrowLeft') { goPrevPage(); e.preventDefault(); }
+  });
+
+  // ツールバーボタン押下時にエディタのフォーカス(カーソル位置)を維持する
+  document.querySelector('.gui-toolbar').addEventListener('mousedown', (e) => {
+    if (e.target.closest('button')) e.preventDefault();
+  });
+
+  document.getElementById('btn-box').addEventListener('click', () => {
+    if (state.editorMode !== 'gui') syncEditorMode('gui');
+    insertBox();
   });
 
   document.getElementById('btn-mask-kw').addEventListener('click', () => {
