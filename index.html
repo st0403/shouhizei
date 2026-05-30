@@ -901,6 +901,14 @@
       <div class="tip">💡 編集や保存をするたびに、現在のデータは自動的にブラウザに保存されます(localStorage)。書き出しは「他の端末と共有したいとき」だけ実行すればOKです。</div>
     </div>
 
+    <div style="background:#e8f4ec; padding:14px; border-radius:8px; border:1px solid #8ec9a5; margin-bottom:12px;">
+      <div style="font-size:13px; color:#2e7d4f; margin-bottom:4px; font-weight:500;">☁️ GitHubから最新データを読み込む</div>
+      <div style="font-size:12px; color:#4a7c5e; margin-bottom:8px;">リポジトリの <code>data/</code> フォルダにあるJSONを取得して上書きします。新しいJSONをリポジトリに追加したときに使ってください。</div>
+      <div class="actions">
+        <button class="btn-success" id="btn-fetch-github">🔄 GitHubから読み込む（上書き）</button>
+      </div>
+    </div>
+
     <div style="background:#fff; padding:14px; border-radius:8px; border:1px solid #d8d3c4; margin-bottom:12px;">
       <div style="font-size:13px; color:#6b6961; margin-bottom:8px;">📤 ファイルに書き出す(エクスポート)</div>
       <div class="actions">
@@ -943,7 +951,40 @@
 
 <script>
 (function(){
-  const STORAGE_KEY = 'consumption_tax_theory_master_v1';
+  const STORAGE_KEY = 'shohizei_theory_master_v1';
+
+  // GitHubから読み込むJSONファイルのリスト（相対パス）
+  const GITHUB_JSON_FILES = [
+    'shohizei_all.json'
+  ];
+
+  // GitHubからデータを取得してマージ
+  async function fetchFromGithub(showUI) {
+    const results = [];
+    for (const path of GITHUB_JSON_FILES) {
+      try {
+        const res = await fetch(path + '?t=' + Date.now()); // キャッシュ回避
+        if (!res.ok) continue;
+        const arr = await res.json();
+        if (Array.isArray(arr)) results.push(...arr);
+      } catch(e) { console.warn('fetch failed:', path, e); }
+    }
+    if (results.length === 0) {
+      if (showUI) alert('GitHubからデータを取得できませんでした。');
+      return false;
+    }
+    const imported = results.map(x => ({
+      id: uid(),
+      title: String(x.title || ''),
+      rank: ['A','B','C'].includes(x.rank) ? x.rank : 'A',
+      body: String(x.body || '')
+    }));
+    state.items = imported;
+    save();
+    render();
+    if (showUI) alert('GitHubから読み込みました（' + imported.length + '件）');
+    return true;
+  }
   const PAGE_BREAK_TOKEN = '<<<PAGEBREAK>>>';
   const BOX_START_TOKEN = '<<<BOXSTART>>>';
   const BOX_END_TOKEN = '<<<BOXEND>>>';
@@ -1937,7 +1978,7 @@
     const ts = date.getFullYear() + ('0'+(date.getMonth()+1)).slice(-2) + ('0'+date.getDate()).slice(-2) +
                 '_' + ('0'+date.getHours()).slice(-2) + ('0'+date.getMinutes()).slice(-2);
     a.href = url;
-    a.download = 'consumption_tax_theory_' + ts + '.json';
+    a.download = 'shohizei_theory_' + ts + '.json';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -2181,6 +2222,18 @@
     const out = state.items.map(({id, ...rest}) => rest);
     document.getElementById('json-area').value = JSON.stringify(out, null, 2);
   });
+  document.getElementById('btn-fetch-github').addEventListener('click', async () => {
+    if (state.items.length > 0) {
+      if (!confirm('現在の' + state.items.length + '件のデータをGitHubの最新データで上書きします。よろしいですか？')) return;
+    }
+    const btn = document.getElementById('btn-fetch-github');
+    btn.textContent = '読み込み中…';
+    btn.disabled = true;
+    await fetchFromGithub(true);
+    btn.textContent = '🔄 GitHubから読み込む（上書き）';
+    btn.disabled = false;
+  });
+
   document.getElementById('btn-sample').addEventListener('click', () => {
     document.getElementById('json-area').value = JSON.stringify(SAMPLE, null, 2);
   });
@@ -2219,6 +2272,13 @@
   load();
   render();
   updateSyncStatus();
+
+  // GitHub JSONの自動読み込み（localStorageが空のときだけ自動、それ以外は手動ボタンで）
+  (async () => {
+    if (state.items.length === 0) {
+      await fetchFromGithub(false);
+    }
+  })();
 })();
 </script>
 </body>
