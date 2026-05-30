@@ -52,7 +52,7 @@
   .toolbar {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
     margin-bottom: 16px;
     padding: 12px;
@@ -224,9 +224,9 @@
     align-items: center;
     margin-top: 16px;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
-  .nav-group { display: flex; gap: 6px; align-items: center; }
+  .nav-group { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
   .counter { font-size: 13px; color: #6b6961; padding: 0 8px; }
   .page-counter { font-size: 12px; color: #888780; padding: 0 6px; }
   .nav-divider { width: 1px; height: 20px; background: #d8d3c4; margin: 0 4px; }
@@ -269,7 +269,7 @@
   .gui-toolbar {
     display: flex;
     gap: 4px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     padding: 8px;
     background: #fdfbf5;
     border: 1px solid #d8d3c4;
@@ -475,7 +475,7 @@
   .actions {
     display: flex;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     margin-top: 12px;
   }
 
@@ -773,6 +773,22 @@
 
       <!-- メインコンテンツ -->
       <div class="main-content">
+        <div class="nav" style="margin-top:0; margin-bottom:12px;">
+          <div class="nav-group">
+            <button id="btn-prev-theory-top" title="前の理論へ">⏮ 前の理論</button>
+            <button id="btn-prev-page-top" title="前のページへ">← ページ</button>
+          </div>
+          <div class="nav-group">
+            <span class="counter" id="counter-top"></span>
+            <span class="nav-divider"></span>
+            <span class="page-counter" id="page-counter-top"></span>
+          </div>
+          <div class="nav-group">
+            <button id="btn-next-page-top" title="次のページへ">ページ →</button>
+            <button id="btn-next-theory-top" title="次の理論へ">次の理論 ⏭</button>
+          </div>
+        </div>
+
         <div class="paper" id="display">
           <div class="empty">理論が登録されていません。<br>「編集」タブから追加するか、「データ管理」タブからファイルを読み込んでください。</div>
         </div>
@@ -1278,6 +1294,8 @@
       display.innerHTML = '<div class="empty">該当する理論がありません。<br>「編集」タブから追加するか、「データ管理」タブからファイルを読み込んでください。</div>';
       counter.textContent = '0 / 0';
       pageCounter.textContent = '- / -';
+      document.getElementById('counter-top').textContent = '0 / 0';
+      document.getElementById('page-counter-top').textContent = '- / -';
       return;
     }
     if (state.currentIdx >= list.length) state.currentIdx = 0;
@@ -1308,6 +1326,8 @@
     display.innerHTML = html;
     counter.textContent = (state.currentIdx + 1) + ' / ' + list.length;
     pageCounter.textContent = pages.length > 1 ? ('p.' + (state.currentPage + 1) + ' / ' + pages.length) : '1 / 1';
+    document.getElementById('counter-top').textContent = (state.currentIdx + 1) + ' / ' + list.length;
+    document.getElementById('page-counter-top').textContent = pages.length > 1 ? ('p.' + (state.currentPage + 1) + ' / ' + pages.length) : '1 / 1';
 
     display.querySelectorAll('[data-mask]').forEach(el => {
       el.addEventListener('click', () => el.classList.toggle('shown'));
@@ -2047,6 +2067,10 @@
   document.getElementById('btn-next-page').addEventListener('click', goNextPage);
   document.getElementById('btn-prev-theory').addEventListener('click', goPrevTheory);
   document.getElementById('btn-next-theory').addEventListener('click', goNextTheory);
+  document.getElementById('btn-prev-page-top').addEventListener('click', goPrevPage);
+  document.getElementById('btn-next-page-top').addEventListener('click', goNextPage);
+  document.getElementById('btn-prev-theory-top').addEventListener('click', goPrevTheory);
+  document.getElementById('btn-next-theory-top').addEventListener('click', goNextTheory);
   document.getElementById('btn-show-all').addEventListener('click', () => {
     document.querySelectorAll('#display [data-mask]').forEach(el => el.classList.add('shown'));
   });
