@@ -532,21 +532,6 @@
     .paper { padding: 16px 18px; font-size: 15px; }
     .gui-toolbar button { font-size: 11px; padding: 4px 8px; }
   }
-
-  /* Theory navigation bar (study tab) */
-  .theory-bar {
-    display: flex;
-    gap: 5px;
-    overflow-x: auto;
-    padding: 4px 0 6px;
-    scrollbar-width: thin;
-    scrollbar-color: #d8d3c4 transparent;
-    -webkit-overflow-scrolling: touch;
-    flex-basis: 100%;
-    margin-top: 4px;
-  }
-  .theory-bar::-webkit-scrollbar { height: 4px; }
-  .theory-bar::-webkit-scrollbar-thumb { background: #d8d3c4; border-radius: 2px; }
   .theory-chip {
     flex-shrink: 0;
     padding: 5px 12px;
@@ -593,6 +578,153 @@
     .paper { border: none; page-break-after: always; }
     .mask { background: transparent !important; color: transparent !important; border-bottom: 1px solid #ccc; }
   }
+
+  /* ===== LAYOUT: サイドバー ===== */
+  .app-layout {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+    position: relative;
+  }
+  .sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: #fdfbf5;
+    border: 1px solid #d8d3c4;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: width 0.25s ease, opacity 0.25s ease;
+    margin-right: 16px;
+  }
+  .sidebar.collapsed {
+    width: 0;
+    opacity: 0;
+    margin-right: 0;
+    border-width: 0;
+    overflow: hidden;
+  }
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: #d8d3c4;
+    font-size: 13px;
+    font-weight: 500;
+    color: #2a2a28;
+  }
+  .sidebar-list {
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+  .sidebar-list::-webkit-scrollbar { width: 4px; }
+  .sidebar-list::-webkit-scrollbar-thumb { background: #d8d3c4; border-radius: 2px; }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #2a2a28;
+    border-left: 3px solid transparent;
+    transition: background 0.1s;
+    line-height: 1.4;
+  }
+  .sidebar-item:hover { background: #f5f3ed; }
+  .sidebar-item.active {
+    background: #fff5f5;
+    border-left-color: #e8443a;
+    color: #c93c30;
+    font-weight: 500;
+  }
+  .sidebar-rank {
+    flex-shrink: 0;
+    font-size: 10px;
+    padding: 1px 5px;
+    border-radius: 3px;
+    background: #e8443a;
+    color: #fff;
+    font-weight: 500;
+  }
+  .sidebar-rank.b { background: #1e7fc4; }
+  .sidebar-rank.c { background: #888780; }
+  .sidebar-title-text { flex: 1; }
+  .main-content { flex: 1; min-width: 0; }
+
+  /* ハンバーガーボタン */
+  .btn-sidebar-toggle {
+    background: #fff;
+    border: 1px solid #d8d3c4;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    line-height: 1;
+    color: #2a2a28;
+    flex-shrink: 0;
+  }
+  .btn-sidebar-toggle:hover { background: #f5f3ed; }
+
+  /* 編集サイドバー */
+  .edit-layout {
+    display: flex;
+    gap: 0;
+    align-items: flex-start;
+  }
+  .edit-sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    background: #fdfbf5;
+    border: 1px solid #d8d3c4;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: width 0.25s ease, opacity 0.25s ease;
+    margin-right: 16px;
+  }
+  .edit-sidebar.collapsed {
+    width: 0;
+    opacity: 0;
+    margin-right: 0;
+    border-width: 0;
+  }
+  .edit-sidebar-list {
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
+    padding: 6px 0;
+  }
+  .edit-sidebar-list::-webkit-scrollbar { width: 4px; }
+  .edit-sidebar-list::-webkit-scrollbar-thumb { background: #d8d3c4; border-radius: 2px; }
+  .edit-sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #2a2a28;
+    border-left: 3px solid transparent;
+  }
+  .edit-sidebar-item:hover { background: #f5f3ed; }
+  .edit-sidebar-item.active { background: #fff5f5; border-left-color: #e8443a; }
+  .edit-sidebar-actions {
+    display: flex;
+    gap: 3px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .edit-sidebar-actions button {
+    padding: 2px 5px;
+    font-size: 11px;
+  }
+  .edit-main { flex: 1; min-width: 0; }
+
+  @media (max-width: 768px) {
+    .sidebar { width: 220px; }
+    .edit-sidebar { width: 200px; }
+  }
+
 </style>
 </head>
 <body>
@@ -608,7 +740,8 @@
   <!-- STUDY -->
   <div class="panel active" id="panel-study">
     <div class="toolbar">
-      <label>ランク</label>
+      <button class="btn-sidebar-toggle" id="btn-toggle-study-sidebar" title="一覧を開閉">☰</button>
+      <label style="margin-left:4px;">ランク</label>
       <select id="filter-rank">
         <option value="all">全て</option>
         <option value="A" selected>A</option>
@@ -622,36 +755,70 @@
         <option value="sentence">文単位のみ</option>
         <option value="none">隠さない</option>
       </select>
-      <div id="theory-bar" class="theory-bar"></div>
       <span class="spacer"></span>
       <button id="btn-show-all">全て表示</button>
       <button id="btn-hide-all">全て隠す</button>
       <button id="btn-shuffle">シャッフル</button>
     </div>
 
-    <div class="paper" id="display">
-      <div class="empty">理論が登録されていません。<br>「編集」タブから追加するか、「データ管理」タブからファイルを読み込んでください。</div>
-    </div>
+    <div class="app-layout">
+      <!-- サイドバー -->
+      <div class="sidebar" id="study-sidebar">
+        <div class="sidebar-header">
+          <span>理論一覧</span>
+          <span id="study-sidebar-count" style="font-size:11px; color:#6b6961;"></span>
+        </div>
+        <div class="sidebar-list" id="study-sidebar-list"></div>
+      </div>
 
-    <div class="nav">
-      <div class="nav-group">
-        <button id="btn-prev-theory" title="前の理論へ">⏮ 前の理論</button>
-        <button id="btn-prev-page" title="前のページへ">← ページ</button>
-      </div>
-      <div class="nav-group">
-        <span class="counter" id="counter">0 / 0</span>
-        <span class="nav-divider"></span>
-        <span class="page-counter" id="page-counter">- / -</span>
-      </div>
-      <div class="nav-group">
-        <button id="btn-next-page" title="次のページへ">ページ →</button>
-        <button id="btn-next-theory" title="次の理論へ">次の理論 ⏭</button>
+      <!-- メインコンテンツ -->
+      <div class="main-content">
+        <div class="paper" id="display">
+          <div class="empty">理論が登録されていません。<br>「編集」タブから追加するか、「データ管理」タブからファイルを読み込んでください。</div>
+        </div>
+
+        <div class="nav">
+          <div class="nav-group">
+            <button id="btn-prev-theory" title="前の理論へ">⏮ 前の理論</button>
+            <button id="btn-prev-page" title="前のページへ">← ページ</button>
+          </div>
+          <div class="nav-group">
+            <span class="counter" id="counter">0 / 0</span>
+            <span class="nav-divider"></span>
+            <span class="page-counter" id="page-counter">- / -</span>
+          </div>
+          <div class="nav-group">
+            <button id="btn-next-page" title="次のページへ">ページ →</button>
+            <button id="btn-next-theory" title="次の理論へ">次の理論 ⏭</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- EDIT -->
   <div class="panel" id="panel-edit">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+      <button class="btn-sidebar-toggle" id="btn-toggle-edit-sidebar" title="一覧を開閉">☰</button>
+      <span style="font-size:14px; font-weight:500; color:#1a1a18;">編集</span>
+      <span id="list-count" style="font-size:12px; color:#888780;"></span>
+    </div>
+    <div class="edit-layout">
+      <!-- 編集サイドバー -->
+      <div class="edit-sidebar" id="edit-sidebar">
+        <div class="sidebar-header">
+          <span>登録済み一覧</span>
+          <div style="display:flex;gap:4px;">
+            <button id="btn-select-mode" style="font-size:11px; padding:2px 7px;">一括削除</button>
+            <button id="btn-delete-selected" class="btn-danger" style="font-size:11px; padding:2px 7px; display:none;">削除</button>
+            <button id="btn-cancel-select" style="font-size:11px; padding:2px 7px; display:none;">取消</button>
+          </div>
+        </div>
+        <div class="edit-sidebar-list" id="list"></div>
+      </div>
+
+      <!-- 編集メイン -->
+      <div class="edit-main">
     <div class="help">
       <strong>編集機能</strong><br>
       ■ <strong>マスク</strong>:選択 → 「キーワード」「文ごと」<br>
@@ -719,17 +886,8 @@
       <div class="paper" id="preview-paper"></div>
     </div>
 
-    <div style="margin-top: 24px;">
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap;">
-        <span style="font-size:13px; color:#6b6961;">登録済み一覧</span>
-        <span id="list-count" style="font-size:12px; color:#888780;"></span>
-        <span style="flex:1;"></span>
-        <button id="btn-select-mode" style="font-size:12px; padding:4px 10px;">一括削除</button>
-        <button id="btn-delete-selected" class="btn-danger" style="font-size:12px; padding:4px 10px; display:none;">削除する</button>
-        <button id="btn-cancel-select" style="font-size:12px; padding:4px 10px; display:none;">キャンセル</button>
-      </div>
-      <div id="list"></div>
-    </div>
+      </div><!-- /edit-main -->
+    </div><!-- /edit-layout -->
   </div>
 
   <!-- DATA -->
@@ -1115,13 +1273,14 @@
     });
 
     if (animate) window.scrollTo({top: 0, behavior: 'smooth'});
-    const bar = document.getElementById('theory-bar');
-    if (bar) {
-      bar.querySelectorAll('.theory-chip').forEach((chip, i) => {
-        chip.classList.toggle('active', i === state.currentIdx);
+    // サイドバーのアクティブ状態を更新
+    const sidebarList = document.getElementById('study-sidebar-list');
+    if (sidebarList) {
+      sidebarList.querySelectorAll('.sidebar-item').forEach((item, i) => {
+        item.classList.toggle('active', i === state.currentIdx);
       });
-      const activeChip = bar.querySelector('.theory-chip.active');
-      if (activeChip) activeChip.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'center' });
+      const activeItem = sidebarList.querySelector('.sidebar-item.active');
+      if (activeItem) activeItem.scrollIntoView({ block: 'nearest' });
     }
   }
 
@@ -1129,27 +1288,33 @@
     const wrap = document.getElementById('list');
     const countEl = document.getElementById('list-count');
     if (countEl) countEl.textContent = state.items.length + '件';
+    if (!wrap) return;
     if (state.items.length === 0){
-      wrap.innerHTML = '<div style="font-size:13px; color:#888780; padding:8px 0;">まだ登録がありません。</div>';
+      wrap.innerHTML = '<div style="font-size:12px; color:#888780; padding:10px 14px;">まだ登録がありません。</div>';
       return;
     }
-    const chipsHtml = state.items.map((item, idx) => {
+    let listHtml = '';
+    state.items.forEach((item, idx) => {
       const isFirst = idx === 0, isLast = idx === state.items.length - 1;
       const rankCls = item.rank === 'B' ? ' b' : item.rank === 'C' ? ' c' : '';
+      const isEditing = state.editingId === item.id;
+      const checkbox = state.selectMode
+        ? '<input type="checkbox" class="chip-check" data-id="' + item.id + '" style="margin:0 4px 0 0; flex-shrink:0;">'
+        : '';
       const actions = state.selectMode ? '' :
-        '<button data-up="' + item.id + '" style="padding:2px 5px; font-size:11px;"' + (isFirst ? ' disabled' : '') + '>▲</button>' +
-        '<button data-down="' + item.id + '" style="padding:2px 5px; font-size:11px;"' + (isLast ? ' disabled' : '') + '>▼</button>' +
-        '<button data-edit-id="' + item.id + '" style="padding:2px 6px; font-size:11px;">編集</button>' +
-        '<button data-delete="' + item.id + '" style="padding:2px 5px; font-size:11px; color:#c93c30;">×</button>';
-      const checkbox = state.selectMode ?
-        '<input type="checkbox" class="chip-check" data-id="' + item.id + '" style="margin:0 2px 0 0;">' : '';
-      return '<div class="edit-chip" data-id="' + item.id + '">' +
+        '<div class="edit-sidebar-actions">' +
+        '<button data-up="' + item.id + '"' + (isFirst ? ' disabled' : '') + '>▲</button>' +
+        '<button data-down="' + item.id + '"' + (isLast ? ' disabled' : '') + '>▼</button>' +
+        '<button data-edit-id="' + item.id + '">編集</button>' +
+        '<button data-delete="' + item.id + '" style="color:#c93c30;">×</button>' +
+        '</div>';
+      listHtml += '<div class="edit-sidebar-item' + (isEditing ? ' active' : '') + '" data-id="' + item.id + '">' +
         checkbox +
-        '<span class="rank-badge' + rankCls + '" style="font-size:10px;padding:1px 5px;margin:0;">' + item.rank + '</span>' +
-        '<span class="chip-title" data-edit-id="' + item.id + '">' + escapeHtml(item.title) + '</span>' +
+        '<span class="sidebar-rank' + rankCls + '">' + item.rank + '</span>' +
+        '<span style="flex:1; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" data-edit-id="' + item.id + '">' + escapeHtml(item.title) + '</span>' +
         actions + '</div>';
-    }).join('');
-    wrap.innerHTML = '<div style="display:flex;flex-wrap:wrap;gap:6px;padding:4px 0;">' + chipsHtml + '</div>';
+    });
+    wrap.innerHTML = listHtml;
     wrap.querySelectorAll('[data-edit-id]').forEach(el => el.addEventListener('click', () => editItem(el.dataset.editId)));
     wrap.querySelectorAll('[data-up]').forEach(b => b.addEventListener('click', () => moveItem(b.dataset.up, 'up')));
     wrap.querySelectorAll('[data-down]').forEach(b => b.addEventListener('click', () => moveItem(b.dataset.down, 'down')));
@@ -1184,21 +1349,29 @@
   }
 
   function renderTheorySelect(){
-    const bar = document.getElementById('theory-bar');
-    if (!bar) return;
+    // 学習サイドバー
+    const sidebarList = document.getElementById('study-sidebar-list');
+    const countEl = document.getElementById('study-sidebar-count');
+    if (!sidebarList) return;
     const list = filtered();
-    bar.innerHTML = '';
+    if (countEl) countEl.textContent = list.length + '件';
+    sidebarList.innerHTML = '';
     list.forEach((item, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'theory-chip' + (i === state.currentIdx ? ' active' : '');
-      btn.textContent = item.title;
-      btn.addEventListener('click', () => {
+      const div = document.createElement('div');
+      const rankCls = item.rank === 'B' ? ' b' : item.rank === 'C' ? ' c' : '';
+      div.className = 'sidebar-item' + (i === state.currentIdx ? ' active' : '');
+      div.innerHTML = '<span class="sidebar-rank' + rankCls + '">' + item.rank + '</span>' +
+                      '<span class="sidebar-title-text">' + escapeHtml(item.title) + '</span>';
+      div.addEventListener('click', () => {
         state.currentIdx = i;
         state.currentPage = 0;
         renderStudy(true);
       });
-      bar.appendChild(btn);
+      sidebarList.appendChild(div);
     });
+    // アクティブ項目をスクロール
+    const activeItem = sidebarList.querySelector('.sidebar-item.active');
+    if (activeItem) activeItem.scrollIntoView({ block: 'nearest' });
   }
 
   function render(){
@@ -2020,6 +2193,26 @@
   // Warn before leaving with unsaved file export
   window.addEventListener('beforeunload', (e) => {
     // Don't block — localStorage保存はされているので、ファイル書き出し未実行は警告のみ
+  });
+
+
+  // サイドバー開閉
+  (function(){
+    const studySidebarOpen = localStorage.getItem('study_sidebar_open');
+    const editSidebarOpen = localStorage.getItem('edit_sidebar_open');
+    if (studySidebarOpen === 'false') document.getElementById('study-sidebar').classList.add('collapsed');
+    if (editSidebarOpen === 'false') document.getElementById('edit-sidebar').classList.add('collapsed');
+  })();
+
+  document.getElementById('btn-toggle-study-sidebar').addEventListener('click', () => {
+    const sb = document.getElementById('study-sidebar');
+    sb.classList.toggle('collapsed');
+    localStorage.setItem('study_sidebar_open', !sb.classList.contains('collapsed'));
+  });
+  document.getElementById('btn-toggle-edit-sidebar').addEventListener('click', () => {
+    const sb = document.getElementById('edit-sidebar');
+    sb.classList.toggle('collapsed');
+    localStorage.setItem('edit_sidebar_open', !sb.classList.contains('collapsed'));
   });
 
   // Init
